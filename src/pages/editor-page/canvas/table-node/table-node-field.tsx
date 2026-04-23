@@ -48,6 +48,8 @@ export interface TableNodeFieldProps {
     highlighted: boolean;
     visible: boolean;
     isConnectable: boolean;
+    // Target edge count passed from canvas to ensure sync with edge creation
+    targetEdgeCount?: number;
 }
 
 const arePropsEqual = (
@@ -72,12 +74,21 @@ const arePropsEqual = (
         prevProps.highlighted === nextProps.highlighted &&
         prevProps.visible === nextProps.visible &&
         prevProps.isConnectable === nextProps.isConnectable &&
-        prevProps.tableNodeId === nextProps.tableNodeId
+        prevProps.tableNodeId === nextProps.tableNodeId &&
+        prevProps.targetEdgeCount === nextProps.targetEdgeCount
     );
 };
 
 export const TableNodeField: React.FC<TableNodeFieldProps> = React.memo(
-    ({ field, focused, tableNodeId, highlighted, visible, isConnectable }) => {
+    ({
+        field,
+        focused,
+        tableNodeId,
+        highlighted,
+        visible,
+        isConnectable,
+        targetEdgeCount,
+    }) => {
         const { relationships, readonly, highlightedCustomType, databaseType } =
             useChartDB();
 
@@ -117,6 +128,11 @@ export const TableNodeField: React.FC<TableNodeFieldProps> = React.memo(
         );
 
         const numberOfEdgesToField = useMemo(() => {
+            // Use targetEdgeCount from canvas when available (ensures sync with edge creation)
+            if (targetEdgeCount !== undefined) {
+                return targetEdgeCount;
+            }
+            // Fallback: count from relationships
             let count = 0;
             for (const rel of relationships) {
                 if (
@@ -127,20 +143,48 @@ export const TableNodeField: React.FC<TableNodeFieldProps> = React.memo(
                 }
             }
             return count;
+        }, [targetEdgeCount, relationships, tableNodeId, field.id]);
+
+        const isForeignKey = useMemo(() => {
+            return relationships.some((rel) => {
+                // FK placement logic:
+                // - FK goes on the "many" side when cardinalities differ
+                // - FK goes on target when cardinalities are the same (one:one, many:many)
+                // The only case where FK goes on source is many:one
+                const fkOnSource =
+                    rel.sourceCardinality === 'many' &&
+                    rel.targetCardinality === 'one';
+
+                if (fkOnSource) {
+                    return (
+                        rel.sourceTableId === tableNodeId &&
+                        rel.sourceFieldId === field.id
+                    );
+                }
+
+                // All other cases: FK on target
+                return (
+                    rel.targetTableId === tableNodeId &&
+                    rel.targetFieldId === field.id
+                );
+            });
         }, [relationships, tableNodeId, field.id]);
 
-        const previousNumberOfEdgesToFieldRef = useRef(numberOfEdgesToField);
+        const previousNumberOfEdgesToFieldRef = useRef<number | null>(null);
 
         useEffect(() => {
+            // Always update on first render, then only when count changes
             if (
+                previousNumberOfEdgesToFieldRef.current === null ||
                 previousNumberOfEdgesToFieldRef.current !== numberOfEdgesToField
             ) {
-                const timer = setTimeout(() => {
+                // Use requestAnimationFrame for immediate but batched update
+                const frameId = requestAnimationFrame(() => {
                     updateNodeInternals(tableNodeId);
                     previousNumberOfEdgesToFieldRef.current =
                         numberOfEdgesToField;
-                }, 100);
-                return () => clearTimeout(timer);
+                });
+                return () => cancelAnimationFrame(frameId);
             }
         }, [tableNodeId, updateNodeInternals, numberOfEdgesToField]);
 
@@ -389,6 +433,11 @@ export const TableNodeField: React.FC<TableNodeFieldProps> = React.memo(
                                 !isSummaryOnly &&
                                 !isDiffFieldRemoved &&
                                 !isDiffNewField,
+                            'text-blue-600 dark:text-blue-400':
+                                isForeignKey &&
+                                !isDiffFieldRemoved &&
+                                !isDiffNewField &&
+                                !isDiffFieldChanged,
                         })}
                     >
                         {fieldDiffChangedName ? (
@@ -408,7 +457,9 @@ export const TableNodeField: React.FC<TableNodeFieldProps> = React.memo(
                                     <MessageCircleMore size={14} />
                                 </div>
                             </TooltipTrigger>
-                            <TooltipContent>{field.comments}</TooltipContent>
+                            <TooltipContent className="max-w-xs whitespace-pre-wrap break-words">
+                                {field.comments}
+                            </TooltipContent>
                         </Tooltip>
                     ) : null}
                 </div>
@@ -455,6 +506,12 @@ export const TableNodeField: React.FC<TableNodeFieldProps> = React.memo(
                                 !isSummaryOnly &&
                                 !isDiffNewField
                                 ? 'text-sky-800 dark:text-sky-200'
+                                : '',
+                            isForeignKey &&
+                                !isDiffFieldRemoved &&
+                                !isDiffNewField &&
+                                !isDiffFieldChanged
+                                ? 'text-blue-600 dark:text-blue-400'
                                 : ''
                         )}
                     >

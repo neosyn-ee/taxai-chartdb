@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import type { DBTable } from '@/lib/domain/db-table';
 import { deepCopy, generateId } from '@/lib/utils';
-import { defaultTableColor, defaultAreaColor, viewColor } from '@/lib/colors';
+import { defaultTableColor, randomColor, viewColor } from '@/lib/colors';
 import type { ChartDBContext, ChartDBEvent } from './chartdb-context';
 import { chartDBContext } from './chartdb-context';
 import { DatabaseType } from '@/lib/domain/database-type';
@@ -10,6 +10,7 @@ import {
     getTableIndexesWithPrimaryKey,
     type DBIndex,
 } from '@/lib/domain/db-index';
+import type { DBCheckConstraint } from '@/lib/domain/db-check-constraint';
 import type { DBRelationship } from '@/lib/domain/db-relationship';
 import { useStorage } from '@/hooks/use-storage';
 import { useRedoUndoStack } from '@/hooks/use-redo-undo-stack';
@@ -32,6 +33,7 @@ import {
     DBCustomTypeKind,
     type DBCustomType,
 } from '@/lib/domain/db-custom-type';
+import { getDefaultPrimaryKeyType } from '@/lib/data/data-types/data-types';
 
 export interface ChartDBProviderProps {
     diagram?: Diagram;
@@ -76,7 +78,8 @@ export const ChartDBProvider: React.FC<
         useState<string>();
 
     const diffCalculatedHandler = useCallback((event: DiffCalculatedEvent) => {
-        const { tablesToAdd, fieldsToAdd, relationshipsToAdd } = event.data;
+        const { tablesToAdd, fieldsToAdd, relationshipsToAdd, areasToAdd } =
+            event.data;
         setTables((tables) =>
             [...tables, ...(tablesToAdd ?? [])].map((table) => {
                 const fields = fieldsToAdd.get(table.id);
@@ -89,6 +92,7 @@ export const ChartDBProvider: React.FC<
             ...relationships,
             ...(relationshipsToAdd ?? []),
         ]);
+        setAreas((areas) => [...areas, ...(areasToAdd ?? [])]);
     }, []);
 
     diffEvents.useSubscription(diffCalculatedHandler);
@@ -333,19 +337,20 @@ export const ChartDBProvider: React.FC<
 
     const createTable: ChartDBContext['createTable'] = useCallback(
         async (attributes) => {
+            const isView = attributes?.isView ?? false;
+            const count = isView
+                ? tables.filter((t) => t.isView).length + 1
+                : tables.filter((t) => !t.isView).length + 1;
             const table: DBTable = {
                 id: generateId(),
-                name: `table_${tables.length + 1}`,
+                name: isView ? `view_${count}` : `table_${count}`,
                 x: 0,
                 y: 0,
                 fields: [
                     {
                         id: generateId(),
                         name: 'id',
-                        type:
-                            databaseType === DatabaseType.SQLITE
-                                ? { id: 'integer', name: 'integer' }
-                                : { id: 'bigint', name: 'bigint' },
+                        type: getDefaultPrimaryKeyType(databaseType),
                         unique: true,
                         nullable: false,
                         primaryKey: true,
@@ -865,10 +870,7 @@ export const ChartDBProvider: React.FC<
             const field: DBField = {
                 id: generateId(),
                 name: `field_${(table?.fields?.length ?? 0) + 1}`,
-                type:
-                    databaseType === DatabaseType.SQLITE
-                        ? { id: 'integer', name: 'integer' }
-                        : { id: 'bigint', name: 'bigint' },
+                type: getDefaultPrimaryKeyType(databaseType),
                 unique: false,
                 nullable: true,
                 primaryKey: false,
@@ -1061,6 +1063,212 @@ export const ChartDBProvider: React.FC<
         },
         [db, diagramId, setTables, addUndoAction, resetRedoStack, getIndex]
     );
+
+    const addCheckConstraint: ChartDBContext['addCheckConstraint'] =
+        useCallback(
+            async (
+                tableId: string,
+                constraint: DBCheckConstraint,
+                options = { updateHistory: true }
+            ) => {
+                setTables((tables) =>
+                    tables.map((t) =>
+                        t.id === tableId
+                            ? {
+                                  ...t,
+                                  checkConstraints: [
+                                      ...(t.checkConstraints ?? []),
+                                      constraint,
+                                  ],
+                              }
+                            : t
+                    )
+                );
+
+                const dbTable = await db.getTable({ diagramId, id: tableId });
+                if (!dbTable) {
+                    return;
+                }
+
+                const updatedAt = new Date();
+                setDiagramUpdatedAt(updatedAt);
+                await Promise.all([
+                    db.updateDiagram({
+                        id: diagramId,
+                        attributes: { updatedAt },
+                    }),
+                    db.updateTable({
+                        id: tableId,
+                        attributes: {
+                            ...dbTable,
+                            checkConstraints: [
+                                ...(dbTable.checkConstraints ?? []),
+                                constraint,
+                            ],
+                        },
+                    }),
+                ]);
+
+                if (options.updateHistory) {
+                    addUndoAction({
+                        action: 'addCheckConstraint',
+                        redoData: { tableId, constraint },
+                        undoData: { tableId, constraintId: constraint.id },
+                    });
+                    resetRedoStack();
+                }
+            },
+            [db, diagramId, setTables, addUndoAction, resetRedoStack]
+        );
+
+    const createCheckConstraint: ChartDBContext['createCheckConstraint'] =
+        useCallback(
+            async (tableId: string) => {
+                const constraint: DBCheckConstraint = {
+                    id: generateId(),
+                    expression: '',
+                    createdAt: Date.now(),
+                };
+
+                await addCheckConstraint(tableId, constraint);
+
+                return constraint;
+            },
+            [addCheckConstraint]
+        );
+
+    const removeCheckConstraint: ChartDBContext['removeCheckConstraint'] =
+        useCallback(
+            async (
+                tableId: string,
+                constraintId: string,
+                options = { updateHistory: true }
+            ) => {
+                const table = getTable(tableId);
+                const prevConstraint = table?.checkConstraints?.find(
+                    (c) => c.id === constraintId
+                );
+
+                setTables((tables) =>
+                    tables.map((t) =>
+                        t.id === tableId
+                            ? {
+                                  ...t,
+                                  checkConstraints: (
+                                      t.checkConstraints ?? []
+                                  ).filter((c) => c.id !== constraintId),
+                              }
+                            : t
+                    )
+                );
+
+                const dbTable = await db.getTable({ diagramId, id: tableId });
+                if (!dbTable) {
+                    return;
+                }
+
+                const updatedAt = new Date();
+                setDiagramUpdatedAt(updatedAt);
+                await Promise.all([
+                    db.updateDiagram({
+                        id: diagramId,
+                        attributes: { updatedAt },
+                    }),
+                    db.updateTable({
+                        id: tableId,
+                        attributes: {
+                            ...dbTable,
+                            checkConstraints: (
+                                dbTable.checkConstraints ?? []
+                            ).filter((c) => c.id !== constraintId),
+                        },
+                    }),
+                ]);
+
+                if (!!prevConstraint && options.updateHistory) {
+                    addUndoAction({
+                        action: 'removeCheckConstraint',
+                        redoData: { tableId, constraintId },
+                        undoData: { tableId, constraint: prevConstraint },
+                    });
+                    resetRedoStack();
+                }
+            },
+            [db, diagramId, setTables, addUndoAction, resetRedoStack, getTable]
+        );
+
+    const updateCheckConstraint: ChartDBContext['updateCheckConstraint'] =
+        useCallback(
+            async (
+                tableId: string,
+                constraintId: string,
+                constraint: Partial<DBCheckConstraint>,
+                options = { updateHistory: true }
+            ) => {
+                const table = getTable(tableId);
+                const prevConstraint = table?.checkConstraints?.find(
+                    (c) => c.id === constraintId
+                );
+
+                setTables((tables) =>
+                    tables.map((t) =>
+                        t.id === tableId
+                            ? {
+                                  ...t,
+                                  checkConstraints: (
+                                      t.checkConstraints ?? []
+                                  ).map((c) =>
+                                      c.id === constraintId
+                                          ? { ...c, ...constraint }
+                                          : c
+                                  ),
+                              }
+                            : t
+                    )
+                );
+
+                const dbTable = await db.getTable({ diagramId, id: tableId });
+                if (!dbTable) {
+                    return;
+                }
+
+                const updatedAt = new Date();
+                setDiagramUpdatedAt(updatedAt);
+                await Promise.all([
+                    db.updateDiagram({
+                        id: diagramId,
+                        attributes: { updatedAt },
+                    }),
+                    db.updateTable({
+                        id: tableId,
+                        attributes: {
+                            ...dbTable,
+                            checkConstraints: (
+                                dbTable.checkConstraints ?? []
+                            ).map((c) =>
+                                c.id === constraintId
+                                    ? { ...c, ...constraint }
+                                    : c
+                            ),
+                        },
+                    }),
+                ]);
+
+                if (!!prevConstraint && options.updateHistory) {
+                    addUndoAction({
+                        action: 'updateCheckConstraint',
+                        redoData: { tableId, constraintId, constraint },
+                        undoData: {
+                            tableId,
+                            constraintId,
+                            constraint: prevConstraint,
+                        },
+                    });
+                    resetRedoStack();
+                }
+            },
+            [db, diagramId, setTables, addUndoAction, resetRedoStack, getTable]
+        );
 
     const addRelationships: ChartDBContext['addRelationships'] = useCallback(
         async (
@@ -1453,7 +1661,7 @@ export const ChartDBProvider: React.FC<
                 y: 0,
                 width: 300,
                 height: 200,
-                color: defaultAreaColor,
+                color: randomColor(),
                 ...attributes,
             };
 
@@ -1930,6 +2138,10 @@ export const ChartDBProvider: React.FC<
                 getField,
                 getIndex,
                 updateIndex,
+                createCheckConstraint,
+                addCheckConstraint,
+                removeCheckConstraint,
+                updateCheckConstraint,
                 addRelationship,
                 addRelationships,
                 createRelationship,

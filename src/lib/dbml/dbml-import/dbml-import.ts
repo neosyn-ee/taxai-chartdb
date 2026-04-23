@@ -1,36 +1,75 @@
 import { Parser } from '@dbml/core';
 import type { Diagram } from '@/lib/domain/diagram';
-import { generateDiagramId, generateId } from '@/lib/utils';
+import { generateDiagramId, generateId, isStringEmpty } from '@/lib/utils';
 import type { DBTable } from '@/lib/domain/db-table';
+import { defaultSchemas } from '@/lib/data/default-schemas';
 import type { Cardinality, DBRelationship } from '@/lib/domain/db-relationship';
 import type { DBField } from '@/lib/domain/db-field';
+import type { DBCheckConstraint } from '@/lib/domain/db-check-constraint';
 import type { DataTypeData } from '@/lib/data/data-types/data-types';
 import {
     findDataTypeDataById,
+    getPreferredSynonym,
     requiresNotNull,
 } from '@/lib/data/data-types/data-types';
 import { defaultTableColor } from '@/lib/colors';
 import { DatabaseType } from '@/lib/domain/database-type';
 import type Field from '@dbml/core/types/model_structure/field';
-import { getTableIndexesWithPrimaryKey, type DBIndex } from '@/lib/domain';
+import {
+    getTableIndexesWithPrimaryKey,
+    type DBIndex,
+    type IndexType,
+    INDEX_TYPES,
+} from '@/lib/domain';
 import {
     DBCustomTypeKind,
     type DBCustomType,
 } from '@/lib/domain/db-custom-type';
-import { validateArrayTypesForDatabase } from './dbml-import-error';
+import {
+    validateArrayTypesForDatabase,
+    DBMLValidationError,
+    getPositionFromIndex,
+} from './dbml-import-error';
+import { validateCheckConstraintWithDetails } from '@/lib/check-constraints/check-constraints-validator';
 
 export const defaultDBMLDiagramName = 'DBML Import';
+
+interface FieldCheckConstraint {
+    expression: string;
+}
+
+interface TableCheckConstraint {
+    expression: string;
+    name?: string;
+}
 
 interface PreprocessDBMLResult {
     content: string;
     arrayFields: Map<string, Set<string>>;
+    fieldChecks: Map<string, Map<string, FieldCheckConstraint>>;
+    tableChecks: Map<string, TableCheckConstraint[]>;
 }
+
+// Helper to find matching closing brace
+const findMatchingBrace = (str: string, startIndex: number): number => {
+    let depth = 1;
+    for (let i = startIndex; i < str.length && depth > 0; i++) {
+        if (str[i] === '{') depth++;
+        else if (str[i] === '}') depth--;
+        if (depth === 0) return i;
+    }
+    return -1;
+};
 
 export const preprocessDBML = (content: string): PreprocessDBMLResult => {
     let processed = content;
 
     // Track array fields found during preprocessing
     const arrayFields = new Map<string, Set<string>>();
+    // Track field-level check constraints: Map<tableName, Map<fieldName, constraint>>
+    const fieldChecks = new Map<string, Map<string, FieldCheckConstraint>>();
+    // Track table-level check constraints: Map<tableName, constraints[]>
+    const tableChecks = new Map<string, TableCheckConstraint[]>();
 
     // Remove TableGroup blocks (not supported by parser)
     processed = processed.replace(/TableGroup\s+[^{]*\{[^}]*\}/gs, '');
@@ -45,22 +84,31 @@ export const preprocessDBML = (content: string): PreprocessDBMLResult => {
     // Note: DBML doesn't officially support array syntax, so we convert type[] to type
     // but track which fields should be arrays
 
-    // First, find all array field declarations and track them
-    const tablePattern =
-        /Table\s+(?:"([^"]+)"\.)?(?:"([^"]+)"|(\w+))\s*(?:\[[^\]]*\])?\s*\{([^}]+)\}/gs;
-    let match;
+    // First, find all Table declarations and extract their bodies properly
+    // Pattern matches: Table "schema"."name" { or Table name { or Table "name" {
+    const tableStartPattern =
+        /Table\s+(?:(?:"([^"]+)"\.)?(?:"([^"]+)"|([a-zA-Z_]\w*)))\s*(?:\[[^\]]*\])?\s*\{/g;
+    let tableMatch;
 
-    while ((match = tablePattern.exec(content)) !== null) {
-        const schema = match[1] || '';
-        const tableName = match[2] || match[3];
-        const tableBody = match[4];
+    while ((tableMatch = tableStartPattern.exec(content)) !== null) {
+        const schema = tableMatch[1] || '';
+        const tableName = tableMatch[2] || tableMatch[3];
+        const openBraceIndex = tableMatch.index + tableMatch[0].length - 1;
+        const closeBraceIndex = findMatchingBrace(content, openBraceIndex + 1);
+
+        if (closeBraceIndex === -1) continue;
+
+        const tableBody = content.substring(
+            openBraceIndex + 1,
+            closeBraceIndex
+        );
         const fullTableName = schema ? `${schema}.${tableName}` : tableName;
 
         // Find array field declarations within this table
-        const fieldPattern = /"?(\w+)"?\s+(\w+(?:\([^)]+\))?)\[\]/g;
+        const arrayFieldPattern = /"?(\w+)"?\s+(\w+(?:\([^)]+\))?)\[\]/g;
         let fieldMatch;
 
-        while ((fieldMatch = fieldPattern.exec(tableBody)) !== null) {
+        while ((fieldMatch = arrayFieldPattern.exec(tableBody)) !== null) {
             const fieldName = fieldMatch[1];
 
             if (!arrayFields.has(fullTableName)) {
@@ -68,10 +116,110 @@ export const preprocessDBML = (content: string): PreprocessDBMLResult => {
             }
             arrayFields.get(fullTableName)!.add(fieldName);
         }
+
+        // Extract field-level check constraints: check: `expression`
+        // Pattern matches lines like: price decimal [not null, check: `price > 0`]
+        const fieldCheckPattern =
+            /^\s*"?(\w+)"?\s+\w+[^\n[]*\[[^\]]*check:\s*`([^`]+)`/gm;
+        let checkMatch;
+
+        while ((checkMatch = fieldCheckPattern.exec(tableBody)) !== null) {
+            const fieldName = checkMatch[1];
+            const expression = checkMatch[2];
+
+            // Validate the check constraint expression
+            const validationResult =
+                validateCheckConstraintWithDetails(expression);
+            if (!validationResult.isValid) {
+                // Calculate position in original content
+                const expressionStartInTableBody =
+                    checkMatch.index + checkMatch[0].indexOf(expression);
+                const expressionStartInContent =
+                    openBraceIndex + 1 + expressionStartInTableBody;
+                const { line, column } = getPositionFromIndex(
+                    content,
+                    expressionStartInContent
+                );
+                throw new DBMLValidationError(
+                    `Invalid check constraint expression "${expression}" on field "${fieldName}": ${validationResult.error}`,
+                    line,
+                    column
+                );
+            }
+
+            if (!fieldChecks.has(fullTableName)) {
+                fieldChecks.set(fullTableName, new Map());
+            }
+            fieldChecks.get(fullTableName)!.set(fieldName, { expression });
+        }
+
+        // Extract table-level checks block: checks { `expression` [name: 'name'] }
+        const checksBlockPattern = /checks\s*\{([^}]*)\}/gs;
+        const checksBlockMatch = checksBlockPattern.exec(tableBody);
+
+        if (checksBlockMatch) {
+            const checksContent = checksBlockMatch[1];
+            const checksBlockStartInTableBody = checksBlockMatch.index;
+
+            // Parse individual check constraints within the block
+            // Pattern: `expression` or `expression` [name: 'name']
+            const checkItemPattern =
+                /`([^`]+)`(?:\s*\[(?:[^\]]*name:\s*['"]([^'"]+)['"])?[^\]]*\])?/g;
+            let checkItemMatch;
+
+            const constraints: TableCheckConstraint[] = [];
+            while (
+                (checkItemMatch = checkItemPattern.exec(checksContent)) !== null
+            ) {
+                const expression = checkItemMatch[1];
+
+                // Validate the check constraint expression
+                const validationResult =
+                    validateCheckConstraintWithDetails(expression);
+                if (!validationResult.isValid) {
+                    // Calculate position in original content
+                    // checksContent starts after "checks {"
+                    const checksBlockHeaderLength =
+                        checksBlockMatch[0].indexOf(checksContent);
+                    const expressionStartInChecksContent =
+                        checkItemMatch.index + 1; // +1 to skip the opening backtick
+                    const expressionStartInContent =
+                        openBraceIndex +
+                        1 +
+                        checksBlockStartInTableBody +
+                        checksBlockHeaderLength +
+                        expressionStartInChecksContent;
+                    const { line, column } = getPositionFromIndex(
+                        content,
+                        expressionStartInContent
+                    );
+                    throw new DBMLValidationError(
+                        `Invalid check constraint expression "${expression}": ${validationResult.error}`,
+                        line,
+                        column
+                    );
+                }
+
+                constraints.push({
+                    expression,
+                    name: checkItemMatch[2] || undefined,
+                });
+            }
+
+            if (constraints.length > 0) {
+                tableChecks.set(fullTableName, constraints);
+            }
+        }
     }
 
     // Now convert array syntax for DBML parser (keep the base type, remove [])
     processed = processed.replace(/(\w+(?:\(\d+(?:,\s*\d+)?\))?)\[\]/g, '$1');
+
+    // Remove check: `...` from field attributes (not supported by parser)
+    processed = processed.replace(/,?\s*check:\s*`[^`]+`/g, '');
+
+    // Remove checks { ... } blocks (not supported by parser)
+    processed = processed.replace(/\s*checks\s*\{[^}]*\}/gs, '');
 
     // Handle inline enum types without values by converting to varchar
     processed = processed.replace(
@@ -86,7 +234,7 @@ export const preprocessDBML = (content: string): PreprocessDBMLResult => {
         'Table $1 {'
     );
 
-    return { content: processed, arrayFields };
+    return { content: processed, arrayFields, fieldChecks, tableChecks };
 };
 
 // Simple function to replace Spanish special characters
@@ -145,6 +293,8 @@ interface DBMLIndex {
     unique?: boolean;
     name?: string;
     pk?: boolean; // Primary key index flag
+    type?: string; // Index type (e.g., 'gin', 'btree', 'hash')
+    note?: string | { value: string } | null;
 }
 
 interface DBMLTable {
@@ -156,9 +306,10 @@ interface DBMLTable {
 }
 
 interface DBMLEndpoint {
+    schemaName?: string;
     tableName: string;
     fieldNames: string[];
-    relation: string;
+    relation: '1' | '*'; // '1' = one, '*' = many (from @dbml/core parser)
 }
 
 interface DBMLRef {
@@ -212,21 +363,10 @@ const mapDBMLTypeToDataType = (
     } satisfies DataTypeData;
 };
 
-const determineCardinality = (
-    field: DBField,
-    referencedField: DBField
-): { sourceCardinality: string; targetCardinality: string } => {
-    const isSourceUnique = field.unique || field.primaryKey;
-    const isTargetUnique = referencedField.unique || referencedField.primaryKey;
-    if (isSourceUnique && isTargetUnique) {
-        return { sourceCardinality: 'one', targetCardinality: 'one' };
-    } else if (isSourceUnique) {
-        return { sourceCardinality: 'one', targetCardinality: 'many' };
-    } else if (isTargetUnique) {
-        return { sourceCardinality: 'many', targetCardinality: 'one' };
-    } else {
-        return { sourceCardinality: 'many', targetCardinality: 'many' };
-    }
+// Convert @dbml/core relation values to cardinality
+// The parser uses '1' for "one" side and '*' for "many" side
+const relationToCardinality = (relation: '1' | '*'): Cardinality => {
+    return relation === '1' ? 'one' : 'many';
 };
 
 export const importDBMLToDiagram = async (
@@ -254,8 +394,12 @@ export const importDBMLToDiagram = async (
 
         const parser = new Parser();
         // Preprocess and sanitize DBML content
-        const { content: preprocessedContent, arrayFields } =
-            preprocessDBML(dbmlContent);
+        const {
+            content: preprocessedContent,
+            arrayFields,
+            fieldChecks,
+            tableChecks,
+        } = preprocessDBML(dbmlContent);
         const sanitizedContent = sanitizeDBML(preprocessedContent);
 
         // Handle content that becomes empty after preprocessing
@@ -322,6 +466,12 @@ export const importDBMLToDiagram = async (
                 enums,
             });
 
+            // Also check the preferred synonym for field attributes (e.g., decimal → numeric)
+            const preferredType = options.databaseType
+                ? getPreferredSynonym(dataType.name, options.databaseType)
+                : null;
+            const effectiveType = preferredType ?? dataType;
+
             // Check if this is a character type that should have a max length
             const baseTypeName = typeName
                 .replace(/\(.*\)/, '')
@@ -338,8 +488,8 @@ export const importDBMLToDiagram = async (
                     characterMaximumLength: args[0],
                 };
             } else if (
-                dataType.fieldAttributes?.precision &&
-                dataType.fieldAttributes?.scale
+                effectiveType.fieldAttributes?.precision &&
+                effectiveType.fieldAttributes?.scale
             ) {
                 const precisionNum = args?.[0] ? parseInt(args[0]) : undefined;
                 const scaleNum = args?.[1] ? parseInt(args[1]) : undefined;
@@ -478,6 +628,8 @@ export const importDBMLToDiagram = async (
                                     unique: dbmlIndex.unique || false,
                                     name: indexName,
                                     pk: Boolean(dbmlIndex.pk) || false,
+                                    type: dbmlIndex.type,
+                                    note: dbmlIndex.note,
                                 };
                             }) || [],
                     });
@@ -501,14 +653,22 @@ export const importDBMLToDiagram = async (
             if (schema.enums) {
                 schema.enums.forEach((enumDef) => {
                     // Get schema name from enum or use schema's name
-                    const enumSchema =
+                    // DBML parser uses 'public' as its default - treat it as empty
+                    const rawEnumSchema =
                         typeof enumDef.schema === 'string'
                             ? enumDef.schema
                             : enumDef.schema?.name || schema.name;
+                    const defaultSchema = defaultSchemas[options.databaseType];
+                    const isEnumSchemaEmpty =
+                        isStringEmpty(rawEnumSchema) ||
+                        rawEnumSchema === 'public';
+                    const enumSchema = isEnumSchemaEmpty
+                        ? defaultSchema
+                        : rawEnumSchema;
 
                     allEnums.push({
                         name: enumDef.name,
-                        schema: enumSchema === 'public' ? '' : enumSchema,
+                        schema: enumSchema,
                         values: enumDef.values || [],
                         note: enumDef.note,
                     });
@@ -548,15 +708,29 @@ export const importDBMLToDiagram = async (
                     }
                 }
 
+                // Map DBML type to DataType
+                const mappedType = mapDBMLTypeToDataType(field.type.type_name, {
+                    ...options,
+                    enums: extractedData.enums,
+                });
+
+                // Check if there's a preferred synonym for this type
+                const preferredType = getPreferredSynonym(
+                    mappedType.name,
+                    options.databaseType
+                );
+
+                // Use the preferred synonym if it exists, otherwise use the mapped type
+                const finalType = preferredType ?? mappedType;
+
                 return {
                     id: generateId(),
                     name: field.name.replace(/['"]/g, ''),
-                    type: mapDBMLTypeToDataType(field.type.type_name, {
-                        ...options,
-                        enums: extractedData.enums,
-                    }),
+                    type: finalType,
                     nullable:
-                        field.increment || requiresNotNull(field.type.type_name)
+                        field.increment ||
+                        field.pk ||
+                        requiresNotNull(field.type.type_name)
                             ? false
                             : !field.not_null,
                     primaryKey: field.pk || false,
@@ -587,13 +761,14 @@ export const importDBMLToDiagram = async (
                     if (dbmlIndex.name) {
                         compositePKIndexName = dbmlIndex.name;
                     }
-                    // Mark fields as primary keys
+                    // Mark fields as primary keys and NOT NULL
                     dbmlIndex.columns.forEach((col) => {
                         const columnName =
                             typeof col === 'string' ? col : col.value;
                         const field = fields.find((f) => f.name === columnName);
                         if (field) {
                             field.primaryKey = true;
+                            field.nullable = false;
                         }
                     });
                 }
@@ -659,6 +834,26 @@ export const importDBMLToDiagram = async (
                             return field.id;
                         });
 
+                        const indexType =
+                            dbmlIndex.type &&
+                            INDEX_TYPES.includes(
+                                dbmlIndex.type.toLowerCase() as IndexType
+                            )
+                                ? (dbmlIndex.type.toLowerCase() as IndexType)
+                                : undefined;
+
+                        let indexComment: string | undefined;
+                        if (dbmlIndex.note) {
+                            if (typeof dbmlIndex.note === 'string') {
+                                indexComment = dbmlIndex.note;
+                            } else if (
+                                typeof dbmlIndex.note === 'object' &&
+                                'value' in dbmlIndex.note
+                            ) {
+                                indexComment = dbmlIndex.note.value;
+                            }
+                        }
+
                         return {
                             id: generateId(),
                             name:
@@ -667,6 +862,8 @@ export const importDBMLToDiagram = async (
                             fieldIds,
                             unique: dbmlIndex.unique || false,
                             createdAt: Date.now(),
+                            ...(indexType ? { type: indexType } : {}),
+                            ...(indexComment ? { comments: indexComment } : {}),
                         };
                     }) || [];
 
@@ -706,18 +903,69 @@ export const importDBMLToDiagram = async (
                 }
             }
 
+            // Get raw schema from DBML, then apply defaultSchema if empty
+            // DBML parser uses 'public' as its default - treat it as empty
+            const defaultSchema = defaultSchemas[options.databaseType];
+            const rawSchema =
+                typeof table.schema === 'string'
+                    ? table.schema
+                    : table.schema?.name;
+            const isSchemaEmpty =
+                isStringEmpty(rawSchema) || rawSchema === 'public';
+            const tableSchema = isSchemaEmpty ? defaultSchema : rawSchema;
+
+            // Build check constraints (all as table-level)
+            // Try with schema first, then without (since original DBML might not have schema)
+            const rawTableSchemaForChecks = rawSchema || '';
+            const fullTableNameForTableChecks = rawTableSchemaForChecks
+                ? `${rawTableSchemaForChecks}.${table.name}`
+                : table.name;
+
+            const allCheckConstraints: DBCheckConstraint[] = [];
+
+            // Convert field-level check constraints to table-level
+            const fieldChecksDefs =
+                fieldChecks.get(fullTableNameForTableChecks) ||
+                fieldChecks.get(table.name);
+            if (fieldChecksDefs) {
+                fieldChecksDefs.forEach((check) => {
+                    allCheckConstraints.push({
+                        id: generateId(),
+                        expression: check.expression,
+                        createdAt: Date.now(),
+                    });
+                });
+            }
+
+            // Add table-level check constraints
+            const tableCheckConstraintsDefs =
+                tableChecks.get(fullTableNameForTableChecks) ||
+                tableChecks.get(table.name);
+            if (tableCheckConstraintsDefs) {
+                tableCheckConstraintsDefs.forEach((check) => {
+                    allCheckConstraints.push({
+                        id: generateId(),
+                        expression: check.expression,
+                        createdAt: Date.now(),
+                    });
+                });
+            }
+
+            const checkConstraints: DBCheckConstraint[] | undefined =
+                allCheckConstraints.length > 0
+                    ? allCheckConstraints
+                    : undefined;
+
             const tableToReturn: DBTable = {
                 id: generateId(),
                 name: table.name.replace(/['"]/g, ''),
-                schema:
-                    typeof table.schema === 'string'
-                        ? table.schema === 'public'
-                            ? ''
-                            : table.schema
-                        : table.schema?.name || '',
+                schema: tableSchema,
                 order: index,
                 fields,
                 indexes,
+                ...(checkConstraints && checkConstraints.length > 0
+                    ? { checkConstraints }
+                    : {}),
                 x: col * tableSpacing,
                 y: row * tableSpacing,
                 color: defaultTableColor,
@@ -734,22 +982,36 @@ export const importDBMLToDiagram = async (
             };
         });
 
+        // Helper to find table by name and schema from endpoint
+        const findTableByEndpoint = (
+            endpoint: DBMLEndpoint
+        ): DBTable | undefined => {
+            const tableName = endpoint.tableName.replace(/['"]/g, '');
+            const endpointSchema = endpoint.schemaName?.replace(/['"]/g, '');
+
+            // Normalize endpoint schema the same way tables are normalized:
+            // empty or 'public' → use database default schema
+            const defaultSchema = defaultSchemas[options.databaseType];
+            const isEndpointSchemaEmpty =
+                isStringEmpty(endpointSchema) || endpointSchema === 'public';
+            const normalizedEndpointSchema = isEndpointSchemaEmpty
+                ? defaultSchema
+                : endpointSchema;
+
+            return tables.find(
+                (t) =>
+                    t.name === tableName &&
+                    (normalizedEndpointSchema === undefined ||
+                        t.schema === normalizedEndpointSchema)
+            );
+        };
+
         // Create relationships using the refs
         const relationships: DBRelationship[] = extractedData.refs.map(
             (ref) => {
                 const [source, target] = ref.endpoints;
-                const sourceTable = tables.find(
-                    (t) =>
-                        t.name === source.tableName.replace(/['"]/g, '') &&
-                        (!source.tableName.includes('.') ||
-                            t.schema === source.tableName.split('.')[0])
-                );
-                const targetTable = tables.find(
-                    (t) =>
-                        t.name === target.tableName.replace(/['"]/g, '') &&
-                        (!target.tableName.includes('.') ||
-                            t.schema === target.tableName.split('.')[0])
-                );
+                const sourceTable = findTableByEndpoint(source);
+                const targetTable = findTableByEndpoint(target);
 
                 if (!sourceTable || !targetTable) {
                     throw new Error('Invalid relationship: tables not found');
@@ -766,8 +1028,14 @@ export const importDBMLToDiagram = async (
                     throw new Error('Invalid relationship: fields not found');
                 }
 
-                const { sourceCardinality, targetCardinality } =
-                    determineCardinality(sourceField, targetField);
+                // Use the relation values from @dbml/core parser
+                // These directly represent the cardinality: '1' = one, '*' = many
+                const sourceCardinality = relationToCardinality(
+                    source.relation
+                );
+                const targetCardinality = relationToCardinality(
+                    target.relation
+                );
 
                 return {
                     id: generateId(),
@@ -778,8 +1046,8 @@ export const importDBMLToDiagram = async (
                     targetTableId: targetTable.id,
                     sourceFieldId: sourceField.id,
                     targetFieldId: targetField.id,
-                    sourceCardinality: sourceCardinality as Cardinality,
-                    targetCardinality: targetCardinality as Cardinality,
+                    sourceCardinality,
+                    targetCardinality,
                     createdAt: Date.now(),
                 };
             }

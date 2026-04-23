@@ -4,7 +4,7 @@ export const uk: LanguageTranslation = {
     translation: {
         editor_sidebar: {
             new_diagram: 'Нова',
-            browse: 'Огляд',
+            browse: 'Відкрити',
             tables: 'Таблиці',
             refs: 'Зв’язки',
             dependencies: 'Залежності',
@@ -15,7 +15,7 @@ export const uk: LanguageTranslation = {
             actions: {
                 actions: 'Дії',
                 new: 'Нова...',
-                browse: 'Огляд...',
+                browse: 'Усі бази даних...',
                 save: 'Зберегти',
                 import: 'Імпорт бази даних',
                 export_sql: 'Експорт SQL',
@@ -127,16 +127,20 @@ export const uk: LanguageTranslation = {
                 // TODO: Translate
                 show_list: 'Show Table List',
                 show_dbml: 'Show DBML Editor',
+                all_hidden: 'Всі таблиці приховані',
+                show_all: 'Показати все',
 
                 table: {
                     fields: 'Поля',
                     nullable: 'Може бути Null?',
                     primary_key: 'Первинний ключ',
                     indexes: 'Індекси',
+                    check_constraints: 'Перевірочні обмеження',
                     comments: 'Коментарі',
                     no_comments: 'Немає коментарів',
                     add_field: 'Додати поле',
                     add_index: 'Додати індекс',
+                    add_check: 'Додати перевірку',
                     index_select_fields: 'Виберіть поля',
                     no_types_found: 'Типи не знайдено',
                     field_name: 'Назва поля',
@@ -163,6 +167,11 @@ export const uk: LanguageTranslation = {
                         index_type: 'Тип індексу',
                         delete_index: 'Видалити індекс',
                     },
+                    check_constraint_actions: {
+                        title: 'Перевірочне обмеження',
+                        expression: 'Вираз',
+                        delete: 'Видалити обмеження',
+                    },
                     table_actions: {
                         title: 'Дії з таблицею',
                         change_schema: 'Змінити схему',
@@ -187,9 +196,10 @@ export const uk: LanguageTranslation = {
                 relationship: {
                     relationship: 'Звʼязок',
                     primary: 'Первинна таблиця',
-                    foreign: 'Посилання на таблицю',
+                    foreign: 'Повʼязана таблиця',
                     cardinality: 'Звʼязок',
                     delete_relationship: 'Видалити',
+                    switch_tables: 'Поміняти таблиці',
                     relationship_actions: {
                         title: 'Дії',
                         delete_relationship: 'Видалити',
@@ -211,31 +221,31 @@ export const uk: LanguageTranslation = {
                 },
             },
 
-            // TODO: Translate
             areas_section: {
-                areas: 'Areas',
-                add_area: 'Add Area',
-                filter: 'Filter',
-                clear: 'Clear Filter',
-                no_results: 'No areas found matching your filter.',
+                areas: 'Області',
+                add_area: 'Додати область',
+                filter: 'Фільтр',
+                clear: 'Очистити фільтр',
+                no_results:
+                    'Області не знайдені, які відповідають вашому фільтру.',
 
                 area: {
                     area_actions: {
-                        title: 'Area Actions',
-                        edit_name: 'Edit Name',
-                        delete_area: 'Delete Area',
+                        title: 'Дії з областю',
+                        edit_name: 'Редагувати назву',
+                        delete_area: 'Видалити область',
                     },
                 },
                 empty_state: {
-                    title: 'No areas',
-                    description: 'Create an area to get started',
+                    title: 'Немає областей',
+                    description: 'Створіть область, щоб почати',
                 },
             },
 
             visuals_section: {
                 visuals: 'Візуальні елементи',
                 tabs: {
-                    areas: 'Areas',
+                    areas: 'Області',
                     notes: 'Нотатки',
                 },
             },
@@ -260,34 +270,36 @@ export const uk: LanguageTranslation = {
                 },
             },
 
-            // TODO: Translate
             custom_types_section: {
-                custom_types: 'Custom Types',
-                filter: 'Filter',
-                clear: 'Clear Filter',
-                no_results: 'No custom types found matching your filter.',
+                custom_types: 'Користувацькі типи',
+                filter: 'Фільтр',
+                clear: 'Очистити фільтр',
+                no_results:
+                    'Не знайдено користувацьких типів, що відповідають фільтру.',
+                new_type: 'Новий тип',
                 empty_state: {
-                    title: 'No custom types',
+                    title: 'Немає користувацьких типів',
                     description:
-                        'Custom types will appear here when they are available in your database',
+                        "Користувацькі типи з'являться тут, коли вони будуть доступні у вашій базі даних",
                 },
                 custom_type: {
-                    kind: 'Kind',
-                    enum_values: 'Enum Values',
-                    composite_fields: 'Fields',
-                    no_fields: 'No fields defined',
+                    kind: 'Вид',
+                    enum_values: 'Значення переліку',
+                    composite_fields: 'Поля',
+                    no_fields: 'Поля не визначені',
                     no_values: 'Значення переліку не визначені',
-                    field_name_placeholder: 'Field name',
-                    field_type_placeholder: 'Select type',
-                    add_field: 'Add Field',
-                    no_fields_tooltip: 'No fields defined for this custom type',
+                    field_name_placeholder: 'Назва поля',
+                    field_type_placeholder: 'Виберіть тип',
+                    add_field: 'Додати поле',
+                    no_fields_tooltip:
+                        'Для цього користувацького типу поля не визначені',
                     custom_type_actions: {
-                        title: 'Actions',
-                        highlight_fields: 'Highlight Fields',
-                        delete_custom_type: 'Delete',
-                        clear_field_highlight: 'Clear Highlight',
+                        title: 'Дії',
+                        highlight_fields: 'Виділити поля',
+                        delete_custom_type: 'Видалити',
+                        clear_field_highlight: 'Зняти виділення',
                     },
-                    delete_custom_type: 'Delete Type',
+                    delete_custom_type: 'Видалити тип',
                 },
             },
         },
@@ -305,8 +317,7 @@ export const uk: LanguageTranslation = {
             custom_type_highlight_tooltip:
                 'Highlighting "{{typeName}}" - Click to clear',
             highlight_overlapping_tables: 'Показати таблиці, що перекриваються',
-            // TODO: Translate
-            filter: 'Filter Tables',
+            filter: 'Фільтрувати таблиці',
         },
 
         new_diagram_dialog: {
@@ -354,6 +365,7 @@ export const uk: LanguageTranslation = {
             },
             cancel: 'Скасувати',
             open: 'Відкрити',
+            new_database: 'Нова база даних',
 
             diagram_actions: {
                 open: 'Відкрити',
@@ -417,10 +429,9 @@ export const uk: LanguageTranslation = {
         export_image_dialog: {
             title: 'Експорт зображення',
             description: 'Виберіть коефіцієнт масштабування для експорту:',
-            scale_1x: '1x Звичайний',
-            scale_2x: '2x (Рекомендовано)',
-            scale_3x: '3x',
-            scale_4x: '4x',
+            scale_1x: '1x (Низька якість)',
+            scale_2x: '2x (Звичайна якість)',
+            scale_4x: '4x (Найкраща якість)',
             cancel: 'Скасувати',
             export: 'Експортувати',
             // TODO: Translate
@@ -509,7 +520,7 @@ export const uk: LanguageTranslation = {
             new_view: 'Нове представлення',
             new_relationship: 'Новий звʼязок',
             // TODO: Translate
-            new_area: 'New Area',
+            new_area: 'Нова область',
             new_note: 'Нова Нотатка',
         },
 
@@ -518,6 +529,24 @@ export const uk: LanguageTranslation = {
             duplicate_table: 'Дублювати таблицю',
             delete_table: 'Видалити таблицю',
             add_relationship: 'Add Relationship', // TODO: Translate
+            move_to_area: 'Перемістити в область',
+            no_area: 'Без області',
+        },
+
+        canvas: {
+            all_tables_hidden: 'Всі таблиці приховані',
+            show_all_tables: 'Показати все',
+        },
+
+        canvas_filter: {
+            title: 'Фільтрувати таблиці',
+            search_placeholder: 'Пошук таблиць...',
+            group_by_schema: 'Групувати за схемою',
+            group_by_area: 'Групувати за областю',
+            no_tables_found: 'Таблиці не знайдено',
+            empty_diagram_description: 'Створіть таблицю, щоб почати',
+            no_tables_description: 'Спробуйте налаштувати пошук або фільтр',
+            clear_filter: 'Очистити фільтр',
         },
 
         snap_to_grid_tooltip: 'Вирівнювати за сіткою (Отримуйте {{key}})',

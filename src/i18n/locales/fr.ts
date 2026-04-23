@@ -4,7 +4,7 @@ export const fr: LanguageTranslation = {
     translation: {
         editor_sidebar: {
             new_diagram: 'Nouveau',
-            browse: 'Parcourir',
+            browse: 'Ouvrir',
             tables: 'Tables',
             refs: 'Refs',
             dependencies: 'Dépendances',
@@ -15,7 +15,7 @@ export const fr: LanguageTranslation = {
             actions: {
                 actions: 'Actions',
                 new: 'Nouveau...',
-                browse: 'Parcourir...',
+                browse: 'Toutes les bases de données...',
                 save: 'Enregistrer',
                 import: 'Importer Base de Données',
                 export_sql: 'Exporter SQL',
@@ -126,16 +126,20 @@ export const fr: LanguageTranslation = {
                     'Aucune table trouvée correspondant à votre filtre.',
                 show_list: 'Afficher la Liste des Tableaux',
                 show_dbml: "Afficher l'éditeur DBML",
+                all_hidden: 'Toutes les tables sont masquées',
+                show_all: 'Tout afficher',
 
                 table: {
                     fields: 'Champs',
                     nullable: 'Nullable?',
                     primary_key: 'Clé Primaire',
                     indexes: 'Index',
+                    check_constraints: 'Contraintes de vérification',
                     comments: 'Commentaires',
                     no_comments: 'Pas de commentaires',
                     add_field: 'Ajouter un Champ',
                     add_index: 'Ajouter un Index',
+                    add_check: 'Ajouter une vérification',
                     index_select_fields: 'Sélectionner des champs',
                     no_types_found: 'Aucun type trouvé',
                     field_name: 'Nom',
@@ -162,6 +166,11 @@ export const fr: LanguageTranslation = {
                         index_type: "Type d'index",
                         delete_index: "Supprimer l'Index",
                     },
+                    check_constraint_actions: {
+                        title: 'Contrainte de vérification',
+                        expression: 'Expression',
+                        delete: 'Supprimer la contrainte',
+                    },
                     table_actions: {
                         title: 'Actions de la Table',
                         add_field: 'Ajouter un Champ',
@@ -186,9 +195,10 @@ export const fr: LanguageTranslation = {
                 relationship: {
                     relationship: 'Relation',
                     primary: 'Table Principale',
-                    foreign: 'Table Référencée',
+                    foreign: 'Table Liée',
                     cardinality: 'Cardinalité',
                     delete_relationship: 'Supprimer',
+                    switch_tables: 'Inverser les tables',
                     relationship_actions: {
                         title: 'Actions',
                         delete_relationship: 'Supprimer',
@@ -210,31 +220,30 @@ export const fr: LanguageTranslation = {
                 },
             },
 
-            // TODO: Translate
             areas_section: {
-                areas: 'Areas',
-                add_area: 'Add Area',
-                filter: 'Filter',
-                clear: 'Clear Filter',
-                no_results: 'No areas found matching your filter.',
+                areas: 'Zones',
+                add_area: 'Ajouter une Zone',
+                filter: 'Filtrer',
+                clear: 'Effacer le Filtre',
+                no_results: 'Aucune zone trouvée correspondant à votre filtre.',
 
                 area: {
                     area_actions: {
-                        title: 'Area Actions',
-                        edit_name: 'Edit Name',
-                        delete_area: 'Delete Area',
+                        title: 'Actions de la Zone',
+                        edit_name: 'Modifier le Nom',
+                        delete_area: 'Supprimer la Zone',
                     },
                 },
                 empty_state: {
-                    title: 'No areas',
-                    description: 'Create an area to get started',
+                    title: 'Aucune zone',
+                    description: 'Créez une zone pour commencer',
                 },
             },
 
             visuals_section: {
                 visuals: 'Visuels',
                 tabs: {
-                    areas: 'Areas',
+                    areas: 'Zones',
                     notes: 'Notes',
                 },
             },
@@ -259,34 +268,36 @@ export const fr: LanguageTranslation = {
                 },
             },
 
-            // TODO: Translate
             custom_types_section: {
-                custom_types: 'Custom Types',
-                filter: 'Filter',
-                clear: 'Clear Filter',
-                no_results: 'No custom types found matching your filter.',
+                custom_types: 'Types Personnalisés',
+                filter: 'Filtrer',
+                clear: 'Effacer le Filtre',
+                no_results:
+                    'Aucun type personnalisé trouvé correspondant à votre filtre.',
+                new_type: 'Nouveau Type',
                 empty_state: {
-                    title: 'No custom types',
+                    title: 'Aucun type personnalisé',
                     description:
-                        'Custom types will appear here when they are available in your database',
+                        "Les types personnalisés apparaîtront ici lorsqu'ils seront disponibles dans votre base de données",
                 },
                 custom_type: {
-                    kind: 'Kind',
-                    enum_values: 'Enum Values',
-                    composite_fields: 'Fields',
-                    no_fields: 'No fields defined',
+                    kind: 'Type',
+                    enum_values: 'Valeurs Enum',
+                    composite_fields: 'Champs',
+                    no_fields: 'Aucun champ défini',
                     no_values: "Aucune valeur d'énumération définie",
-                    field_name_placeholder: 'Field name',
-                    field_type_placeholder: 'Select type',
-                    add_field: 'Add Field',
-                    no_fields_tooltip: 'No fields defined for this custom type',
+                    field_name_placeholder: 'Nom du champ',
+                    field_type_placeholder: 'Sélectionner le type',
+                    add_field: 'Ajouter un Champ',
+                    no_fields_tooltip:
+                        'Aucun champ défini pour ce type personnalisé',
                     custom_type_actions: {
                         title: 'Actions',
-                        highlight_fields: 'Highlight Fields',
-                        delete_custom_type: 'Delete',
-                        clear_field_highlight: 'Clear Highlight',
+                        highlight_fields: 'Surligner les Champs',
+                        delete_custom_type: 'Supprimer',
+                        clear_field_highlight: 'Effacer le Surlignage',
                     },
-                    delete_custom_type: 'Delete Type',
+                    delete_custom_type: 'Supprimer le Type',
                 },
             },
         },
@@ -304,8 +315,7 @@ export const fr: LanguageTranslation = {
             custom_type_highlight_tooltip:
                 'Highlighting "{{typeName}}" - Click to clear',
             highlight_overlapping_tables: 'Surligner les tables chevauchées',
-            // TODO: Translate
-            filter: 'Filter Tables',
+            filter: 'Filtrer les Tables',
         },
 
         new_diagram_dialog: {
@@ -353,6 +363,7 @@ export const fr: LanguageTranslation = {
             },
             cancel: 'Annuler',
             open: 'Ouvrir',
+            new_database: 'Nouvelle Base de Données',
 
             diagram_actions: {
                 open: 'Ouvrir',
@@ -382,10 +393,9 @@ export const fr: LanguageTranslation = {
             title: "Exporter l'image",
             description:
                 "Choisissez le facteur d'échelle pour l'image exportée.",
-            scale_1x: '1x Normal',
-            scale_2x: '2x (Recommandé)',
-            scale_3x: '3x',
-            scale_4x: '4x',
+            scale_1x: '1x (Basse qualité)',
+            scale_2x: '2x (Qualité normale)',
+            scale_4x: '4x (Meilleure qualité)',
             cancel: 'Annuler',
             export: 'Exporter',
             // TODO: Translate
@@ -509,8 +519,7 @@ export const fr: LanguageTranslation = {
             new_table: 'Nouvelle Table',
             new_view: 'Nouvelle Vue',
             new_relationship: 'Nouvelle Relation',
-            // TODO: Translate
-            new_area: 'New Area',
+            new_area: 'Nouvelle Zone',
             new_note: 'Nouvelle Note',
         },
 
@@ -519,6 +528,25 @@ export const fr: LanguageTranslation = {
             duplicate_table: 'Tableau Dupliqué',
             delete_table: 'Supprimer la Table',
             add_relationship: 'Ajouter une Relation',
+            move_to_area: 'Déplacer vers une Zone',
+            no_area: 'Aucune Zone',
+        },
+
+        canvas: {
+            all_tables_hidden: 'Toutes les tables sont masquées',
+            show_all_tables: 'Tout afficher',
+        },
+
+        canvas_filter: {
+            title: 'Filtrer les Tables',
+            search_placeholder: 'Rechercher des tables...',
+            group_by_schema: 'Grouper par Schéma',
+            group_by_area: 'Grouper par Zone',
+            no_tables_found: 'Aucune table trouvée',
+            empty_diagram_description: 'Créez une table pour commencer',
+            no_tables_description:
+                'Essayez de modifier votre recherche ou filtre',
+            clear_filter: 'Effacer le filtre',
         },
 
         snap_to_grid_tooltip:

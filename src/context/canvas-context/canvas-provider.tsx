@@ -36,7 +36,11 @@ export const CanvasProvider = ({ children }: CanvasProviderProps) => {
         areas,
         diagramId,
     } = useChartDB();
-    const { filter, loading: filterLoading } = useDiagramFilter();
+    const {
+        filter,
+        loading: filterLoading,
+        hasActiveFilter,
+    } = useDiagramFilter();
     const { showDBViews } = useLocalConfig();
     const { fitView, screenToFlowPosition, setNodes } = useReactFlow();
     const [overlapGraph, setOverlapGraph] =
@@ -44,6 +48,11 @@ export const CanvasProvider = ({ children }: CanvasProviderProps) => {
     const [editTableModeTable, setEditTableModeTable] = useState<{
         tableId: string;
         fieldId?: string;
+    } | null>(null);
+
+    const [editRelationshipPopover, setEditRelationshipPopover] = useState<{
+        relationshipId: string;
+        position: { x: number; y: number };
     } | null>(null);
 
     const events = useEventEmitter<CanvasEvent>();
@@ -68,8 +77,11 @@ export const CanvasProvider = ({ children }: CanvasProviderProps) => {
 
         diagramIdActiveFilterRef.current = diagramId;
 
-        setShowFilter(true);
-    }, [filterLoading, diagramId]);
+        // Only show filter if there's an active filter
+        if (hasActiveFilter) {
+            setShowFilter(true);
+        }
+    }, [filterLoading, diagramId, hasActiveFilter]);
 
     const reorderTables = useCallback(
         (
@@ -161,6 +173,16 @@ export const CanvasProvider = ({ children }: CanvasProviderProps) => {
             endFloatingEdgeCreation();
         }, [setNodes, endFloatingEdgeCreation]);
 
+    const openRelationshipPopover: CanvasContext['openRelationshipPopover'] =
+        useCallback(({ relationshipId, position }) => {
+            setEditRelationshipPopover({ relationshipId, position });
+        }, []);
+
+    const closeRelationshipPopover: CanvasContext['closeRelationshipPopover'] =
+        useCallback(() => {
+            setEditRelationshipPopover(null);
+        }, []);
+
     const showCreateRelationshipNode: CanvasContext['showCreateRelationshipNode'] =
         useCallback(
             ({ sourceTableId, targetTableId, x, y }) => {
@@ -211,6 +233,9 @@ export const CanvasProvider = ({ children }: CanvasProviderProps) => {
                 showFilter,
                 editTableModeTable,
                 setEditTableModeTable,
+                openRelationshipPopover,
+                closeRelationshipPopover,
+                editRelationshipPopover,
                 tempFloatingEdge: tempFloatingEdge,
                 setTempFloatingEdge: setTempFloatingEdge,
                 startFloatingEdgeCreation: startFloatingEdgeCreation,

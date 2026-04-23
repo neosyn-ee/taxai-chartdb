@@ -4,7 +4,7 @@ export const te: LanguageTranslation = {
     translation: {
         editor_sidebar: {
             new_diagram: 'కొత్తది',
-            browse: 'బ్రాఉజ్',
+            browse: 'తెరవు',
             tables: 'టేబల్లు',
             refs: 'సంబంధాలు',
             dependencies: 'ఆధారతలు',
@@ -15,7 +15,7 @@ export const te: LanguageTranslation = {
             actions: {
                 actions: 'చర్యలు',
                 new: 'కొత్తది...',
-                browse: 'బ్రాఉజ్ చేయండి...',
+                browse: 'అన్ని డేటాబేస్‌లు...',
                 save: 'సేవ్',
                 import: 'డేటాబేస్‌ను దిగుమతి చేసుకోండి',
                 export_sql: 'SQL ఎగుమతి',
@@ -129,16 +129,20 @@ export const te: LanguageTranslation = {
                 // TODO: Translate
                 show_list: 'Show Table List',
                 show_dbml: 'Show DBML Editor',
+                all_hidden: 'అన్ని పట్టికలు దాచబడ్డాయి',
+                show_all: 'అన్ని చూపించు',
 
                 table: {
                     fields: 'ఫీల్డులు',
                     nullable: 'నల్వాలు?',
                     primary_key: 'ప్రాథమిక కీ',
                     indexes: 'ఇండెక్సులు',
+                    check_constraints: 'తనిఖీ పరిమితులు',
                     comments: 'వ్యాఖ్యలు',
                     no_comments: 'వ్యాఖ్యలు లేవు',
                     add_field: 'ఫీల్డ్ జోడించు',
                     add_index: 'ఇండెక్స్ జోడించు',
+                    add_check: 'తనిఖీ జోడించు',
                     index_select_fields: 'ఫీల్డ్స్ ఎంచుకోండి',
                     no_types_found: 'ప్రకృతులు కనుగొనబడలేదు',
                     field_name: 'పేరు',
@@ -165,6 +169,11 @@ export const te: LanguageTranslation = {
                         index_type: 'ఇండెక్స్ రకం',
                         delete_index: 'ఇండెక్స్ తొలగించు',
                     },
+                    check_constraint_actions: {
+                        title: 'తనిఖీ పరిమితి',
+                        expression: 'వ్యక్తీకరణ',
+                        delete: 'పరిమితిని తొలగించు',
+                    },
                     table_actions: {
                         title: 'పట్టిక చర్యలు',
                         change_schema: 'స్కీమాను మార్చు',
@@ -190,9 +199,10 @@ export const te: LanguageTranslation = {
                 relationship: {
                     relationship: 'సంబంధం',
                     primary: 'ప్రాథమిక పట్టిక',
-                    foreign: 'సూచించబడిన పట్టిక',
+                    foreign: 'సంబంధిత పట్టిక',
                     cardinality: 'కార్డినాలిటీ',
                     delete_relationship: 'సంబంధం తొలగించు',
+                    switch_tables: 'పట్టికలను మార్చు',
                     relationship_actions: {
                         title: 'చర్యలు',
                         delete_relationship: 'సంబంధం తొలగించు',
@@ -214,31 +224,30 @@ export const te: LanguageTranslation = {
                 },
             },
 
-            // TODO: Translate
             areas_section: {
-                areas: 'Areas',
-                add_area: 'Add Area',
-                filter: 'Filter',
-                clear: 'Clear Filter',
-                no_results: 'No areas found matching your filter.',
+                areas: 'ప్రాంతాలు',
+                add_area: 'ప్రాంతం జోడించండి',
+                filter: 'ఫిల్టర్',
+                clear: 'ఫిల్టర్‌ను క్లియర్ చేయండి',
+                no_results: 'మీ ఫిల్టర్‌కు సరిపోలే ప్రాంతాలు కనుగొనబడలేదు.',
 
                 area: {
                     area_actions: {
-                        title: 'Area Actions',
-                        edit_name: 'Edit Name',
-                        delete_area: 'Delete Area',
+                        title: 'ప్రాంత చర్యలు',
+                        edit_name: 'పేరు సవరించండి',
+                        delete_area: 'ప్రాంతాన్ని తొలగించండి',
                     },
                 },
                 empty_state: {
-                    title: 'No areas',
-                    description: 'Create an area to get started',
+                    title: 'ప్రాంతాలు లేవు',
+                    description: 'ప్రారంభించడానికి ఒక ప్రాంతం సృష్టించండి',
                 },
             },
 
             visuals_section: {
                 visuals: 'Visuals',
                 tabs: {
-                    areas: 'Areas',
+                    areas: 'ప్రాంతాలు',
                     notes: 'గమనికలు',
                 },
             },
@@ -263,34 +272,35 @@ export const te: LanguageTranslation = {
                 },
             },
 
-            // TODO: Translate
             custom_types_section: {
-                custom_types: 'Custom Types',
-                filter: 'Filter',
-                clear: 'Clear Filter',
-                no_results: 'No custom types found matching your filter.',
+                custom_types: 'అనుకూల రకాలు',
+                filter: 'ఫిల్టర్',
+                clear: 'ఫిల్టర్‌ను క్లియర్ చేయండి',
+                no_results: 'మీ ఫిల్టర్‌కు సరిపోలే అనుకూల రకాలు కనుగొనబడలేదు.',
+                new_type: 'కొత్త రకం',
                 empty_state: {
-                    title: 'No custom types',
+                    title: 'అనుకూల రకాలు లేవు',
                     description:
-                        'Custom types will appear here when they are available in your database',
+                        'మీ డేటాబేస్‌లో అందుబాటులో ఉన్నప్పుడు అనుకూల రకాలు ఇక్కడ కనిపిస్తాయి',
                 },
                 custom_type: {
-                    kind: 'Kind',
-                    enum_values: 'Enum Values',
-                    composite_fields: 'Fields',
-                    no_fields: 'No fields defined',
+                    kind: 'రకం',
+                    enum_values: 'Enum విలువలు',
+                    composite_fields: 'ఫీల్డ్‌లు',
+                    no_fields: 'ఫీల్డ్‌లు నిర్వచించబడలేదు',
                     no_values: 'ఏ enum విలువలు నిర్వచించబడలేదు',
-                    field_name_placeholder: 'Field name',
-                    field_type_placeholder: 'Select type',
-                    add_field: 'Add Field',
-                    no_fields_tooltip: 'No fields defined for this custom type',
+                    field_name_placeholder: 'ఫీల్డ్ పేరు',
+                    field_type_placeholder: 'రకాన్ని ఎంచుకోండి',
+                    add_field: 'ఫీల్డ్ జోడించండి',
+                    no_fields_tooltip:
+                        'ఈ అనుకూల రకానికి ఫీల్డ్‌లు నిర్వచించబడలేదు',
                     custom_type_actions: {
-                        title: 'Actions',
-                        highlight_fields: 'Highlight Fields',
-                        delete_custom_type: 'Delete',
-                        clear_field_highlight: 'Clear Highlight',
+                        title: 'చర్యలు',
+                        highlight_fields: 'ఫీల్డ్‌లను హైలైట్ చేయండి',
+                        delete_custom_type: 'తొలగించండి',
+                        clear_field_highlight: 'హైలైట్ తొలగించండి',
                     },
-                    delete_custom_type: 'Delete Type',
+                    delete_custom_type: 'రకాన్ని తొలగించండి',
                 },
             },
         },
@@ -308,8 +318,7 @@ export const te: LanguageTranslation = {
             custom_type_highlight_tooltip:
                 'Highlighting "{{typeName}}" - Click to clear',
             highlight_overlapping_tables: 'అవకాశించు పట్టికలను హైలైట్ చేయండి',
-            // TODO: Translate
-            filter: 'Filter Tables',
+            filter: 'పట్టికలను ఫిల్టర్ చేయండి',
         },
 
         new_diagram_dialog: {
@@ -357,6 +366,7 @@ export const te: LanguageTranslation = {
             },
             cancel: 'రద్దు',
             open: 'తెరవు',
+            new_database: 'కొత్త డేటాబేస్',
 
             diagram_actions: {
                 open: 'తెరవు',
@@ -420,10 +430,9 @@ export const te: LanguageTranslation = {
         export_image_dialog: {
             title: 'చిత్రం ఎగుమతి',
             description: 'ఎగుమతి కోసం స్కేల్ ఫ్యాక్టర్ ఎంచుకోండి:',
-            scale_1x: '1x సాధారణ',
-            scale_2x: '2x (సిఫార్సు చేయబడినది)',
-            scale_3x: '3x',
-            scale_4x: '4x',
+            scale_1x: '1x (తక్కువ నాణ్యత)',
+            scale_2x: '2x (సాధారణ నాణ్యత)',
+            scale_4x: '4x (అత్యుత్తమ నాణ్యత)',
             cancel: 'రద్దు',
             export: 'ఎగుమతి',
             // TODO: Translate
@@ -518,7 +527,7 @@ export const te: LanguageTranslation = {
             new_view: 'కొత్త వ్యూ',
             new_relationship: 'కొత్త సంబంధం',
             // TODO: Translate
-            new_area: 'New Area',
+            new_area: 'కొత్త ప్రాంతం',
             new_note: 'కొత్త నోట్',
         },
 
@@ -527,6 +536,25 @@ export const te: LanguageTranslation = {
             duplicate_table: 'Duplicate Table', // TODO: Translate
             delete_table: 'పట్టికను తొలగించు',
             add_relationship: 'Add Relationship', // TODO: Translate
+            move_to_area: 'ప్రాంతానికి తరలించు',
+            no_area: 'ప్రాంతం లేదు',
+        },
+
+        canvas: {
+            all_tables_hidden: 'అన్ని పట్టికలు దాచబడ్డాయి',
+            show_all_tables: 'అన్ని చూపించు',
+        },
+
+        canvas_filter: {
+            title: 'పట్టికలను ఫిల్టర్ చేయండి',
+            search_placeholder: 'పట్టికలను శోధించండి...',
+            group_by_schema: 'స్కీమా ద్వారా గ్రూప్ చేయండి',
+            group_by_area: 'ప్రాంతం ద్వారా గ్రూప్ చేయండి',
+            no_tables_found: 'పట్టికలు కనుగొనబడలేదు',
+            empty_diagram_description: 'ప్రారంభించడానికి పట్టికను సృష్టించండి',
+            no_tables_description:
+                'మీ శోధన లేదా ఫిల్టర్‌ను సర్దుబాటు చేయడానికి ప్రయత్నించండి',
+            clear_filter: 'ఫిల్టర్ క్లియర్ చేయండి',
         },
 
         // TODO: Translate

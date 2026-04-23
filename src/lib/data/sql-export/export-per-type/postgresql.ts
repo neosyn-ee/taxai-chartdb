@@ -13,6 +13,21 @@ import type { DBRelationship } from '@/lib/domain/db-relationship';
 import type { DBCustomType } from '@/lib/domain/db-custom-type';
 import { DBCustomTypeKind } from '@/lib/domain/db-custom-type';
 
+// Build a unique, safe index name from table and index names,
+// respecting PostgreSQL's 63-character identifier limit
+function buildIndexName(tableName: string, indexName: string): string {
+    const safeTableName = tableName.replace(/[^a-zA-Z0-9_]/g, '_');
+    const safeIndexName = indexName.replace(/[^a-zA-Z0-9_]/g, '_');
+    let combinedName = `${safeTableName}_${safeIndexName}`;
+    if (combinedName.length > 60) {
+        combinedName =
+            safeIndexName.length > 60
+                ? safeIndexName.substring(0, 60)
+                : safeIndexName;
+    }
+    return combinedName;
+}
+
 function parsePostgresDefault(field: DBField): string {
     if (!field.default || typeof field.default !== 'string') {
         return '';
@@ -251,11 +266,11 @@ export function exportPostgreSQL({
                                 typeName.toLowerCase() === 'integer' ||
                                 typeName.toLowerCase() === 'int'
                             ) {
-                                serialType = 'SERIAL';
+                                serialType = 'serial';
                             } else if (typeName.toLowerCase() === 'bigint') {
-                                serialType = 'BIGSERIAL';
+                                serialType = 'bigserial';
                             } else if (typeName.toLowerCase() === 'smallint') {
-                                serialType = 'SMALLSERIAL';
+                                serialType = 'smallserial';
                             }
                         }
 
@@ -325,22 +340,29 @@ export function exportPostgreSQL({
                                 : '';
 
                         // Do not add PRIMARY KEY as a column constraint - will add as table constraint
-                        return `${exportFieldComment(field.comments ?? '')}    ${fieldName} ${serialType || typeWithSize}${serialType ? '' : notNull}${identity}${unique}${defaultValue}`;
+                        return `${exportFieldComment(field.comments ?? '')}    ${fieldName} ${serialType || typeWithSize}${notNull}${identity}${unique}${defaultValue}`;
                     })
                     .join(',\n')}${
                     primaryKeyFields.length > 0
-                        ? `,\n    ${(() => {
-                              // Find PK index to get the constraint name
-                              const pkIndex = table.indexes.find(
-                                  (idx) => idx.isPrimaryKey
-                              );
-                              return pkIndex?.name
-                                  ? `CONSTRAINT "${pkIndex.name}" `
-                                  : '';
-                          })()}PRIMARY KEY (${primaryKeyFields
+                        ? `,\n    PRIMARY KEY (${primaryKeyFields
                               .map((f) => `"${f.name}"`)
                               .join(', ')})`
                         : ''
+                }${
+                    // Add check constraints (filter out empty expressions)
+                    (() => {
+                        const validChecks = (
+                            table.checkConstraints ?? []
+                        ).filter((c) => c.expression && c.expression.trim());
+                        return validChecks.length > 0
+                            ? validChecks
+                                  .map(
+                                      (constraint) =>
+                                          `,\n    CHECK (${constraint.expression})`
+                                  )
+                                  .join('')
+                            : '';
+                    })()
                 }\n);${
                     // Add table comments
                     table.comments
@@ -386,27 +408,20 @@ export function exportPostgreSQL({
                                     return '';
                                 }
 
-                                // Create unique index name using table name and index name
-                                // This ensures index names are unique across the database
-                                const safeTableName = table.name.replace(
-                                    /[^a-zA-Z0-9_]/g,
-                                    '_'
-                                );
-                                const safeIndexName = index.name.replace(
-                                    /[^a-zA-Z0-9_]/g,
-                                    '_'
-                                );
-
-                                // Limit index name length to avoid PostgreSQL's 63-character identifier limit
-                                let combinedName = `${safeTableName}_${safeIndexName}`;
-                                if (combinedName.length > 60) {
-                                    // If too long, use just the index name or a truncated version
-                                    combinedName =
-                                        safeIndexName.length > 60
-                                            ? safeIndexName.substring(0, 60)
-                                            : safeIndexName;
+                                // Skip unique indexes on single columns that already have inline UNIQUE
+                                // PostgreSQL automatically creates an index for UNIQUE constraints
+                                if (
+                                    index.unique &&
+                                    indexFields.length === 1 &&
+                                    indexFields[0]?.unique
+                                ) {
+                                    return '';
                                 }
 
+                                const combinedName = buildIndexName(
+                                    table.name,
+                                    index.name
+                                );
                                 const indexName = `"${combinedName}"`;
 
                                 // Get the properly quoted field names
@@ -420,11 +435,30 @@ export function exportPostgreSQL({
                                     ? `CREATE ${index.unique ? 'UNIQUE ' : ''}INDEX ${indexName} ON ${tableName}${index.type && index.type !== 'btree' ? ` USING ${index.type.toUpperCase()}` : ''} (${indexFieldNames.join(', ')});`
                                     : '';
                             })
+                            .filter(Boolean)
+                            .sort((a, b) => a.localeCompare(b)); // Sort for consistent output
+
+                        const indexComments = table.indexes
+                            .filter((index) => index.comments)
+                            .map((index) => {
+                                const combinedName = buildIndexName(
+                                    table.name,
+                                    index.name
+                                );
+                                return `COMMENT ON INDEX "${combinedName}" IS '${escapeSQLComment(index.comments!)}';`;
+                            })
                             .filter(Boolean);
 
-                        return validIndexes.length > 0
-                            ? `\n-- Indexes\n${validIndexes.join('\n')}`
-                            : '';
+                        const indexSection =
+                            validIndexes.length > 0
+                                ? `\n-- Indexes\n${validIndexes.join('\n')}`
+                                : '';
+                        const indexCommentSection =
+                            indexComments.length > 0
+                                ? `\n${indexComments.join('\n')}`
+                                : '';
+
+                        return indexSection + indexCommentSection;
                     })()
                 }\n`;
             })
@@ -467,39 +501,31 @@ export function exportPostgreSQL({
                 }
 
                 // Determine which table should have the foreign key based on cardinality
+                // - FK goes on the "many" side when cardinalities differ
+                // - FK goes on target when cardinalities are the same (one:one, many:many)
                 let fkTable, fkField, refTable, refField;
 
                 if (
-                    r.sourceCardinality === 'one' &&
+                    r.sourceCardinality === 'many' &&
                     r.targetCardinality === 'many'
                 ) {
-                    // FK goes on target table
-                    fkTable = targetTable;
-                    fkField = targetField;
-                    refTable = sourceTable;
-                    refField = sourceField;
+                    // Many-to-many relationships need a junction table, skip
+                    return '';
                 } else if (
                     r.sourceCardinality === 'many' &&
                     r.targetCardinality === 'one'
                 ) {
-                    // FK goes on source table
-                    fkTable = sourceTable;
-                    fkField = sourceField;
-                    refTable = targetTable;
-                    refField = targetField;
-                } else if (
-                    r.sourceCardinality === 'one' &&
-                    r.targetCardinality === 'one'
-                ) {
-                    // For 1:1, FK can go on either side, but typically goes on the table that references the other
-                    // We'll keep the current behavior for 1:1
+                    // FK goes on source table (the many side)
                     fkTable = sourceTable;
                     fkField = sourceField;
                     refTable = targetTable;
                     refField = targetField;
                 } else {
-                    // Many-to-many relationships need a junction table, skip for now
-                    return '';
+                    // All other cases: FK goes on target table
+                    fkTable = targetTable;
+                    fkField = targetField;
+                    refTable = sourceTable;
+                    refField = sourceField;
                 }
 
                 const fkTableName = fkTable.schema

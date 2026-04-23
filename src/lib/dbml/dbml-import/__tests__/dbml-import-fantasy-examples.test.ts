@@ -672,9 +672,9 @@ Table projects {
             expect(diagram.customTypes).toBeDefined();
             expect(diagram.customTypes).toHaveLength(3); // job_status, hr.employee_type, grade
 
-            // Check job_status enum
+            // Check job_status enum (PostgreSQL default schema is 'public')
             const jobStatusEnum = diagram.customTypes?.find(
-                (ct) => ct.name === 'job_status' && !ct.schema
+                (ct) => ct.name === 'job_status' && ct.schema === 'public'
             );
             expect(jobStatusEnum).toBeDefined();
             expect(jobStatusEnum?.kind).toBe(DBCustomTypeKind.enum);
@@ -698,9 +698,9 @@ Table projects {
                 'intern',
             ]);
 
-            // Check grade enum with quoted values
+            // Check grade enum with quoted values (PostgreSQL default schema is 'public')
             const gradeEnum = diagram.customTypes?.find(
-                (ct) => ct.name === 'grade' && !ct.schema
+                (ct) => ct.name === 'grade' && ct.schema === 'public'
             );
             expect(gradeEnum).toBeDefined();
             expect(gradeEnum?.kind).toBe(DBCustomTypeKind.enum);
@@ -806,9 +806,9 @@ Table admin.users {
             // Verify both enums are created
             expect(diagram.customTypes).toHaveLength(2);
 
-            // Check public.status enum
+            // Check public.status enum (PostgreSQL default schema is 'public')
             const publicStatusEnum = diagram.customTypes?.find(
-                (ct) => ct.name === 'status' && !ct.schema
+                (ct) => ct.name === 'status' && ct.schema === 'public'
             );
             expect(publicStatusEnum).toBeDefined();
             expect(publicStatusEnum?.values).toEqual([
@@ -830,9 +830,9 @@ Table admin.users {
             ]);
 
             // Verify fields reference correct enums
-            // Note: 'public' schema is converted to empty string
+            // Note: 'public' schema is the default for PostgreSQL
             const publicUsersTable = diagram.tables?.find(
-                (t) => t.name === 'users' && t.schema === ''
+                (t) => t.name === 'users' && t.schema === 'public'
             );
             const adminUsersTable = diagram.tables?.find(
                 (t) => t.name === 'users' && t.schema === 'admin'
@@ -1040,11 +1040,11 @@ Table "bb"."users" {
             expect(bbUsersTable?.fields).toHaveLength(1);
 
             expect(aaUsersTable?.fields[0].name).toBe('id');
-            expect(aaUsersTable?.fields[0].type.id).toBe('integer');
+            expect(aaUsersTable?.fields[0].type.id).toBe('int');
             expect(aaUsersTable?.fields[0].primaryKey).toBe(true);
 
             expect(bbUsersTable?.fields[0].name).toBe('id');
-            expect(bbUsersTable?.fields[0].type.id).toBe('integer');
+            expect(bbUsersTable?.fields[0].type.id).toBe('int');
             expect(bbUsersTable?.fields[0].primaryKey).toBe(true);
         });
 
@@ -1074,7 +1074,7 @@ Table "public_2"."posts" {
   "id" varchar(500) [pk]
   "title" varchar(500)
   "content" text
-  "user_id" varchar(500) [ref: < "public"."users"."id"]
+  "user_id" varchar(500) [ref: > "public"."users"."id"]
   "created_at" timestamp
 
   Indexes {
@@ -1086,8 +1086,8 @@ Table "public_2"."posts" {
 Table "public_3"."comments" {
   "id" varchar(500) [pk]
   "content" text
-  "post_id" varchar(500) [ref: < "public_2"."posts"."id"]
-  "user_id" varchar(500) [ref: < "public"."users"."id"]
+  "post_id" varchar(500) [ref: > "public_2"."posts"."id"]
+  "user_id" varchar(500) [ref: > "public"."users"."id"]
   "created_at" timestamp
 
   Indexes {
@@ -1103,7 +1103,7 @@ Table "public_3"."comments" {
 
             // Note: 'public' schema is converted to empty string
             const usersTable = diagram.tables?.find(
-                (t) => t.name === 'users' && t.schema === ''
+                (t) => t.name === 'users' && t.schema === 'public'
             );
             const postsTable = diagram.tables?.find(
                 (t) => t.name === 'posts' && t.schema === 'public_2'
