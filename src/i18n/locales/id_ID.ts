@@ -49,6 +49,7 @@ export const id_ID: LanguageTranslation = {
                 backup: 'Cadangan',
                 export_diagram: 'Ekspor Diagram',
                 restore_diagram: 'Pulihkan Diagram',
+                versions: 'Versions',
             },
             help: {
                 help: 'Bantuan',
@@ -482,6 +483,17 @@ export const id_ID: LanguageTranslation = {
                 description:
                     'Sesuatu yang salah. Butuh bantuan? support@chartdb.io',
             },
+        },
+
+        versions_dialog: {
+            title: 'Diagram Versions',
+            description:
+                'Automatic snapshots of your diagram. The last 3 edits are kept locally in your browser.',
+            empty: 'No versions saved yet. Start editing and a snapshot will appear shortly.',
+            meta: '{{tables}} tables · {{relationships}} relationships',
+            restore: 'Restore',
+            restoring: 'Restoring…',
+            close: 'Close',
         },
 
         import_diagram_dialog: {

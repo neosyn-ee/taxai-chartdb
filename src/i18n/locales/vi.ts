@@ -49,6 +49,7 @@ export const vi: LanguageTranslation = {
                 backup: 'Hỗ trợ',
                 export_diagram: 'Xuất sơ đồ',
                 restore_diagram: 'Khôi phục sơ đồ',
+                versions: 'Versions',
             },
             help: {
                 help: 'Trợ giúp',
@@ -481,6 +482,17 @@ export const vi: LanguageTranslation = {
                 description:
                     'Có gì đó không ổn. Cần trợ giúp? support@chartdb.io',
             },
+        },
+
+        versions_dialog: {
+            title: 'Diagram Versions',
+            description:
+                'Automatic snapshots of your diagram. The last 3 edits are kept locally in your browser.',
+            empty: 'No versions saved yet. Start editing and a snapshot will appear shortly.',
+            meta: '{{tables}} tables · {{relationships}} relationships',
+            restore: 'Restore',
+            restoring: 'Restoring…',
+            close: 'Close',
         },
 
         import_diagram_dialog: {

@@ -50,6 +50,7 @@ export const ja: LanguageTranslation = {
                 backup: 'バックアップ',
                 export_diagram: 'ダイアグラムをエクスポート',
                 restore_diagram: 'ダイアグラムを復元',
+                versions: 'Versions',
             },
             help: {
                 help: 'ヘルプ',
@@ -489,6 +490,18 @@ export const ja: LanguageTranslation = {
             },
         },
         // TODO: Translate
+
+        versions_dialog: {
+            title: 'Diagram Versions',
+            description:
+                'Automatic snapshots of your diagram. The last 3 edits are kept locally in your browser.',
+            empty: 'No versions saved yet. Start editing and a snapshot will appear shortly.',
+            meta: '{{tables}} tables · {{relationships}} relationships',
+            restore: 'Restore',
+            restoring: 'Restoring…',
+            close: 'Close',
+        },
+
         import_diagram_dialog: {
             title: 'Import Diagram',
             description: 'Paste the diagram JSON below:',

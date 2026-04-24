@@ -48,6 +48,7 @@ export const ru: LanguageTranslation = {
                 backup: 'Бэкап',
                 export_diagram: 'Экспорт диаграммы',
                 restore_diagram: 'Восстановить диаграмму',
+                versions: 'Versions',
             },
             help: {
                 help: 'Помощь',
@@ -483,6 +484,18 @@ export const ru: LanguageTranslation = {
                     'Что-то пошло не так. Если вам нужна помощь, напишите нам: support@chartdb.io',
             },
         },
+
+        versions_dialog: {
+            title: 'Diagram Versions',
+            description:
+                'Automatic snapshots of your diagram. The last 3 edits are kept locally in your browser.',
+            empty: 'No versions saved yet. Start editing and a snapshot will appear shortly.',
+            meta: '{{tables}} tables · {{relationships}} relationships',
+            restore: 'Restore',
+            restoring: 'Restoring…',
+            close: 'Close',
+        },
+
         import_diagram_dialog: {
             title: 'Импорт кода диаграммы',
             description: 'Вставьте JSON код диаграммы ниже:',

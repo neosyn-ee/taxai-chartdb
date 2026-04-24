@@ -49,6 +49,7 @@ export const de: LanguageTranslation = {
                 backup: 'Sicherung',
                 export_diagram: 'Diagramm exportieren',
                 restore_diagram: 'Diagramm wiederherstellen',
+                versions: 'Versions',
             },
             help: {
                 help: 'Hilfe',
@@ -488,6 +489,18 @@ export const de: LanguageTranslation = {
             },
         },
         // TODO: Translate
+
+        versions_dialog: {
+            title: 'Diagram Versions',
+            description:
+                'Automatic snapshots of your diagram. The last 3 edits are kept locally in your browser.',
+            empty: 'No versions saved yet. Start editing and a snapshot will appear shortly.',
+            meta: '{{tables}} tables · {{relationships}} relationships',
+            restore: 'Restore',
+            restoring: 'Restoring…',
+            close: 'Close',
+        },
+
         import_diagram_dialog: {
             title: 'Import Diagram',
             description: 'Paste the diagram JSON below:',

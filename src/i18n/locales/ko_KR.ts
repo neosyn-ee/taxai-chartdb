@@ -49,6 +49,7 @@ export const ko_KR: LanguageTranslation = {
                 backup: '백업',
                 export_diagram: '다이어그램 내보내기',
                 restore_diagram: '다이어그램 복구',
+                versions: 'Versions',
             },
             help: {
                 help: '도움말',
@@ -482,6 +483,18 @@ export const ko_KR: LanguageTranslation = {
                     '무언가 문제가 발생하였습니다. 도움이 필요하신 경우 support@chartdb.io으로 연락해주세요.',
             },
         },
+
+        versions_dialog: {
+            title: 'Diagram Versions',
+            description:
+                'Automatic snapshots of your diagram. The last 3 edits are kept locally in your browser.',
+            empty: 'No versions saved yet. Start editing and a snapshot will appear shortly.',
+            meta: '{{tables}} tables · {{relationships}} relationships',
+            restore: 'Restore',
+            restoring: 'Restoring…',
+            close: 'Close',
+        },
+
         import_diagram_dialog: {
             title: '다이어그램 가져오기',
             description: '아래에 다이어그램 JSON을 첨부해주세요:',

@@ -12,6 +12,9 @@ import type { Area } from '@/lib/domain/area';
 import type { DBCustomType } from '@/lib/domain/db-custom-type';
 import type { DiagramFilter } from '@/lib/domain/diagram-filter/diagram-filter';
 import type { Note } from '@/lib/domain/note';
+import type { DiagramVersion } from '@/lib/domain/diagram-version';
+import { VERSION_RETENTION } from '@/lib/domain/diagram-version';
+import { generateId } from '@/lib/utils';
 
 export const StorageProvider: React.FC<React.PropsWithChildren> = ({
     children,
@@ -53,6 +56,10 @@ export const StorageProvider: React.FC<React.PropsWithChildren> = ({
             diagram_filters: EntityTable<
                 DiagramFilter & { diagramId: string },
                 'diagramId' // primary key "id" (for the typings only)
+            >;
+            diagram_versions: EntityTable<
+                DiagramVersion,
+                'id' // primary key "id" (for the typings only)
             >;
         };
 
@@ -236,6 +243,24 @@ export const StorageProvider: React.FC<React.PropsWithChildren> = ({
             config: '++id, defaultDiagramId',
             diagram_filters: 'diagramId, tableIds, schemasIds',
             notes: '++id, diagramId, content, x, y, width, height, color',
+        });
+
+        dexieDB.version(14).stores({
+            diagrams:
+                '++id, name, databaseType, databaseEdition, createdAt, updatedAt',
+            db_tables:
+                '++id, diagramId, name, schema, x, y, fields, indexes, color, createdAt, width, comment, isView, isMaterializedView, order',
+            db_relationships:
+                '++id, diagramId, name, sourceSchema, sourceTableId, targetSchema, targetTableId, sourceFieldId, targetFieldId, type, createdAt',
+            db_dependencies:
+                '++id, diagramId, schema, tableId, dependentSchema, dependentTableId, createdAt',
+            areas: '++id, diagramId, name, x, y, width, height, color',
+            db_custom_types:
+                '++id, diagramId, schema, type, kind, values, fields',
+            config: '++id, defaultDiagramId',
+            diagram_filters: 'diagramId, tableIds, schemasIds',
+            notes: '++id, diagramId, content, x, y, width, height, color',
+            diagram_versions: 'id, diagramId, createdAt',
         });
 
         dexieDB.on('ready', async () => {
@@ -870,10 +895,66 @@ export const StorageProvider: React.FC<React.PropsWithChildren> = ({
                 db.areas.where('diagramId').equals(id).delete(),
                 db.db_custom_types.where('diagramId').equals(id).delete(),
                 db.notes.where('diagramId').equals(id).delete(),
+                db.diagram_versions.where('diagramId').equals(id).delete(),
             ]);
         },
         [db]
     );
+
+    const listDiagramVersions: StorageContext['listDiagramVersions'] =
+        useCallback(
+            async (diagramId): Promise<DiagramVersion[]> => {
+                const versions = await db.diagram_versions
+                    .where('diagramId')
+                    .equals(diagramId)
+                    .toArray();
+
+                return versions.sort(
+                    (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
+                );
+            },
+            [db]
+        );
+
+    const addDiagramVersion: StorageContext['addDiagramVersion'] = useCallback(
+        async ({ diagramId, snapshot }) => {
+            await db.diagram_versions.add({
+                id: generateId(),
+                diagramId,
+                snapshot,
+                createdAt: new Date(),
+            });
+
+            const versions = await listDiagramVersions(diagramId);
+            const stale = versions.slice(VERSION_RETENTION);
+            if (stale.length === 0) return;
+
+            await db.diagram_versions
+                .where('id')
+                .anyOf(stale.map((v) => v.id))
+                .delete();
+        },
+        [db, listDiagramVersions]
+    );
+
+    const deleteDiagramVersion: StorageContext['deleteDiagramVersion'] =
+        useCallback(
+            async (id) => {
+                await db.diagram_versions.delete(id);
+            },
+            [db]
+        );
+
+    const deleteDiagramVersions: StorageContext['deleteDiagramVersions'] =
+        useCallback(
+            async (diagramId) => {
+                await db.diagram_versions
+                    .where('diagramId')
+                    .equals(diagramId)
+                    .delete();
+            },
+            [db]
+        );
 
     return (
         <storageContext.Provider
@@ -925,6 +1006,10 @@ export const StorageProvider: React.FC<React.PropsWithChildren> = ({
                 getDiagramFilter,
                 updateDiagramFilter,
                 deleteDiagramFilter,
+                addDiagramVersion,
+                listDiagramVersions,
+                deleteDiagramVersion,
+                deleteDiagramVersions,
             }}
         >
             {children}

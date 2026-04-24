@@ -50,6 +50,7 @@ export const bn: LanguageTranslation = {
                 backup: 'ব্যাকআপ',
                 export_diagram: 'ডায়াগ্রাম রপ্তানি করুন',
                 restore_diagram: 'ডায়াগ্রাম পুনরুদ্ধার করুন',
+                versions: 'Versions',
             },
             help: {
                 help: 'সাহায্য',
@@ -485,6 +486,17 @@ export const bn: LanguageTranslation = {
                 description:
                     'কিছু ভুল হয়েছে। সাহায্যের প্রয়োজন? support@chartdb.io-এ যোগাযোগ করুন।',
             },
+        },
+
+        versions_dialog: {
+            title: 'Diagram Versions',
+            description:
+                'Automatic snapshots of your diagram. The last 3 edits are kept locally in your browser.',
+            empty: 'No versions saved yet. Start editing and a snapshot will appear shortly.',
+            meta: '{{tables}} tables · {{relationships}} relationships',
+            restore: 'Restore',
+            restoring: 'Restoring…',
+            close: 'Close',
         },
 
         import_diagram_dialog: {

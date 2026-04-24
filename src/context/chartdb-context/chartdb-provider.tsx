@@ -1,4 +1,10 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, {
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from 'react';
 import type { DBTable } from '@/lib/domain/db-table';
 import { deepCopy, generateId } from '@/lib/utils';
 import { defaultTableColor, randomColor, viewColor } from '@/lib/colors';
@@ -34,6 +40,10 @@ import {
     type DBCustomType,
 } from '@/lib/domain/db-custom-type';
 import { getDefaultPrimaryKeyType } from '@/lib/data/data-types/data-types';
+import { diagramSchema } from '@/lib/domain/diagram';
+import { diagramToJSONOutput } from '@/lib/export-import-utils';
+import { VERSION_SNAPSHOT_DEBOUNCE_MS } from '@/lib/domain/diagram-version';
+import { useDebounce } from '@/hooks/use-debounce-v2';
 
 export interface ChartDBProviderProps {
     diagram?: Diagram;
@@ -1951,6 +1961,91 @@ export const ChartDBProvider: React.FC<
         [storageDB, loadDiagramFromData]
     );
 
+    const lastSnapshotKeyRef = useRef<string>('');
+
+    const persistSnapshot = useDebounce(
+        useCallback(async () => {
+            if (!diagramId || readonly) return;
+            const snapshot = diagramToJSONOutput(currentDiagram);
+            await storageDB.addDiagramVersion({ diagramId, snapshot });
+            lastSnapshotKeyRef.current = `${diagramId}|${diagramUpdatedAt.getTime()}`;
+        }, [diagramId, readonly, currentDiagram, diagramUpdatedAt, storageDB]),
+        VERSION_SNAPSHOT_DEBOUNCE_MS
+    );
+
+    useEffect(() => {
+        if (!diagramId || readonly) return;
+        const key = `${diagramId}|${diagramUpdatedAt.getTime()}`;
+        const previous = lastSnapshotKeyRef.current;
+        if (!previous || !previous.startsWith(`${diagramId}|`)) {
+            lastSnapshotKeyRef.current = key;
+            return;
+        }
+        if (previous === key) return;
+        persistSnapshot();
+    }, [diagramId, diagramUpdatedAt, readonly, persistSnapshot]);
+
+    const restoreDiagramVersion: ChartDBContext['restoreDiagramVersion'] =
+        useCallback(
+            async (versionId) => {
+                if (!diagramId) return;
+                const versions = await storageDB.listDiagramVersions(diagramId);
+                const target = versions.find((v) => v.id === versionId);
+                if (!target) return;
+
+                const restored = diagramSchema.parse({
+                    ...JSON.parse(target.snapshot),
+                    id: diagramId,
+                    createdAt: diagramCreatedAt,
+                    updatedAt: new Date(),
+                });
+
+                await Promise.all([
+                    storageDB.deleteDiagramTables(diagramId),
+                    storageDB.deleteDiagramRelationships(diagramId),
+                    storageDB.deleteDiagramDependencies(diagramId),
+                    storageDB.deleteDiagramAreas(diagramId),
+                    storageDB.deleteDiagramCustomTypes(diagramId),
+                    storageDB.deleteDiagramNotes(diagramId),
+                ]);
+
+                await storageDB.updateDiagram({
+                    id: diagramId,
+                    attributes: {
+                        name: restored.name,
+                        databaseType: restored.databaseType,
+                        databaseEdition: restored.databaseEdition,
+                        updatedAt: restored.updatedAt,
+                    },
+                });
+
+                await Promise.all([
+                    ...(restored.tables ?? []).map((table) =>
+                        storageDB.addTable({ diagramId, table })
+                    ),
+                    ...(restored.relationships ?? []).map((relationship) =>
+                        storageDB.addRelationship({ diagramId, relationship })
+                    ),
+                    ...(restored.dependencies ?? []).map((dependency) =>
+                        storageDB.addDependency({ diagramId, dependency })
+                    ),
+                    ...(restored.areas ?? []).map((area) =>
+                        storageDB.addArea({ diagramId, area })
+                    ),
+                    ...(restored.customTypes ?? []).map((customType) =>
+                        storageDB.addCustomType({ diagramId, customType })
+                    ),
+                    ...(restored.notes ?? []).map((note) =>
+                        storageDB.addNote({ diagramId, note })
+                    ),
+                ]);
+
+                lastSnapshotKeyRef.current = `${diagramId}|${restored.updatedAt.getTime()}`;
+                loadDiagramFromData(restored);
+            },
+            [diagramId, diagramCreatedAt, storageDB, loadDiagramFromData]
+        );
+
     // Custom type operations
     const getCustomType: ChartDBContext['getCustomType'] = useCallback(
         (id: string) => customTypes.find((type) => type.id === id) ?? null,
@@ -2115,6 +2210,7 @@ export const ChartDBProvider: React.FC<
                 updateDiagramName,
                 loadDiagram,
                 loadDiagramFromData,
+                restoreDiagramVersion,
                 updateDatabaseType,
                 updateDatabaseEdition,
                 clearDiagramData,

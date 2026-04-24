@@ -49,6 +49,7 @@ export const zh_TW: LanguageTranslation = {
                 backup: '備份',
                 export_diagram: '匯出圖表',
                 restore_diagram: '恢復圖表',
+                versions: 'Versions',
             },
             help: {
                 help: '幫助',
@@ -473,6 +474,17 @@ export const zh_TW: LanguageTranslation = {
                 description:
                     'Something went wrong. Need help? support@chartdb.io',
             },
+        },
+
+        versions_dialog: {
+            title: 'Diagram Versions',
+            description:
+                'Automatic snapshots of your diagram. The last 3 edits are kept locally in your browser.',
+            empty: 'No versions saved yet. Start editing and a snapshot will appear shortly.',
+            meta: '{{tables}} tables · {{relationships}} relationships',
+            restore: 'Restore',
+            restoring: 'Restoring…',
+            close: 'Close',
         },
 
         import_diagram_dialog: {

@@ -99,6 +99,7 @@ export interface ChartDBContext {
         diagram: Diagram,
         options?: { forceUpdateStorage?: boolean }
     ) => Promise<void>;
+    restoreDiagramVersion: (versionId: string) => Promise<void>;
 
     // Database type operations
     updateDatabaseType: (databaseType: DatabaseType) => Promise<void>;
@@ -357,6 +358,7 @@ export const chartDBContext = createContext<ChartDBContext>({
     updateDiagramUpdatedAt: emptyFn,
     loadDiagram: emptyFn,
     loadDiagramFromData: emptyFn,
+    restoreDiagramVersion: emptyFn,
     clearDiagramData: emptyFn,
     deleteDiagram: emptyFn,
     updateDiagramData: emptyFn,

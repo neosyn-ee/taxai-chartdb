@@ -9,6 +9,7 @@ import type { Area } from '@/lib/domain/area';
 import type { DBCustomType } from '@/lib/domain/db-custom-type';
 import type { DiagramFilter } from '@/lib/domain/diagram-filter/diagram-filter';
 import type { Note } from '@/lib/domain/note';
+import type { DiagramVersion } from '@/lib/domain/diagram-version';
 
 export interface StorageContext {
     // Config operations
@@ -152,6 +153,15 @@ export interface StorageContext {
     deleteNote: (params: { diagramId: string; id: string }) => Promise<void>;
     listNotes: (diagramId: string) => Promise<Note[]>;
     deleteDiagramNotes: (diagramId: string) => Promise<void>;
+
+    // Diagram version operations (history snapshots)
+    addDiagramVersion: (params: {
+        diagramId: string;
+        snapshot: string;
+    }) => Promise<void>;
+    listDiagramVersions: (diagramId: string) => Promise<DiagramVersion[]>;
+    deleteDiagramVersion: (id: string) => Promise<void>;
+    deleteDiagramVersions: (diagramId: string) => Promise<void>;
 }
 
 export const storageInitialValue: StorageContext = {
@@ -212,6 +222,11 @@ export const storageInitialValue: StorageContext = {
     deleteNote: emptyFn,
     listNotes: emptyFn,
     deleteDiagramNotes: emptyFn,
+
+    addDiagramVersion: emptyFn,
+    listDiagramVersions: emptyFn,
+    deleteDiagramVersion: emptyFn,
+    deleteDiagramVersions: emptyFn,
 };
 
 export const storageContext =

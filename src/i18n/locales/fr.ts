@@ -48,6 +48,7 @@ export const fr: LanguageTranslation = {
                 backup: 'Sauvegarde',
                 export_diagram: 'Exporter le diagramme',
                 restore_diagram: 'Restaurer le diagramme',
+                versions: 'Versions',
             },
             help: {
                 help: 'Aide',
@@ -482,6 +483,18 @@ export const fr: LanguageTranslation = {
                     "Une erreur s'est produite. Besoin d'aide ? support@chartdb.io",
             },
         },
+
+        versions_dialog: {
+            title: 'Diagram Versions',
+            description:
+                'Automatic snapshots of your diagram. The last 3 edits are kept locally in your browser.',
+            empty: 'No versions saved yet. Start editing and a snapshot will appear shortly.',
+            meta: '{{tables}} tables · {{relationships}} relationships',
+            restore: 'Restore',
+            restoring: 'Restoring…',
+            close: 'Close',
+        },
+
         import_diagram_dialog: {
             title: 'Importer un diagramme',
             description: 'Coller le diagramme au format JSON ci-dessous :',

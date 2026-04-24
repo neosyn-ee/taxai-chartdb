@@ -6,6 +6,7 @@ import type { ExportSQLDialogProps } from '@/dialogs/export-sql-dialog/export-sq
 import type { ExportImageDialogProps } from '@/dialogs/export-image-dialog/export-image-dialog';
 import type { ExportDiagramDialogProps } from '@/dialogs/export-diagram-dialog/export-diagram-dialog';
 import type { ImportDiagramDialogProps } from '@/dialogs/import-diagram-dialog/import-diagram-dialog';
+import type { VersionsDialogProps } from '@/dialogs/versions-dialog/versions-dialog';
 import type { CreateRelationshipDialogProps } from '@/dialogs/create-relationship-dialog/create-relationship-dialog';
 import type { OpenDiagramDialogProps } from '@/dialogs/open-diagram-dialog/open-diagram-dialog';
 import type { CreateDiagramDialogProps } from '@/dialogs/create-diagram-dialog/create-diagram-dialog';
@@ -66,6 +67,10 @@ export interface DialogContext {
         params: Omit<ImportDiagramDialogProps, 'dialog'>
     ) => void;
     closeImportDiagramDialog: () => void;
+
+    // Versions dialog
+    openVersionsDialog: (params?: Omit<VersionsDialogProps, 'dialog'>) => void;
+    closeVersionsDialog: () => void;
 }
 
 export const dialogContext = createContext<DialogContext>({
@@ -89,4 +94,6 @@ export const dialogContext = createContext<DialogContext>({
     closeExportDiagramDialog: emptyFn,
     openImportDiagramDialog: emptyFn,
     closeImportDiagramDialog: emptyFn,
+    openVersionsDialog: emptyFn,
+    closeVersionsDialog: emptyFn,
 });

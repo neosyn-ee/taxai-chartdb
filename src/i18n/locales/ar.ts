@@ -49,6 +49,7 @@ export const ar: LanguageTranslation = {
                 backup: 'النسخ الاحتياطي',
                 export_diagram: 'تصدير المخطط',
                 restore_diagram: 'استعادة المخطط',
+                versions: 'Versions',
             },
             help: {
                 help: 'مساعدة',
@@ -476,6 +477,18 @@ export const ar: LanguageTranslation = {
                     'support@chartdb.io حدث خطأ ما. هل تحتاج إلى مساعدة؟',
             },
         },
+
+        versions_dialog: {
+            title: 'Diagram Versions',
+            description:
+                'Automatic snapshots of your diagram. The last 3 edits are kept locally in your browser.',
+            empty: 'No versions saved yet. Start editing and a snapshot will appear shortly.',
+            meta: '{{tables}} tables · {{relationships}} relationships',
+            restore: 'Restore',
+            restoring: 'Restoring…',
+            close: 'Close',
+        },
+
         import_diagram_dialog: {
             title: 'استيراد الرسم البياني',
             description: ':للرسم البياني ادناه JSON قم بلصق',

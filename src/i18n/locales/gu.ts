@@ -50,6 +50,7 @@ export const gu: LanguageTranslation = {
                 backup: 'બેકઅપ',
                 export_diagram: 'ડાયાગ્રામ નિકાસ કરો',
                 restore_diagram: 'ડાયાગ્રામ પુનઃસ્થાપિત કરો',
+                versions: 'Versions',
             },
             help: {
                 help: 'મદદ',
@@ -483,6 +484,17 @@ export const gu: LanguageTranslation = {
                 description:
                     'કશુક તો ખોટું થયું. મદદ જોઈએ? support@chartdb.io પર સંપર્ક કરો.',
             },
+        },
+
+        versions_dialog: {
+            title: 'Diagram Versions',
+            description:
+                'Automatic snapshots of your diagram. The last 3 edits are kept locally in your browser.',
+            empty: 'No versions saved yet. Start editing and a snapshot will appear shortly.',
+            meta: '{{tables}} tables · {{relationships}} relationships',
+            restore: 'Restore',
+            restoring: 'Restoring…',
+            close: 'Close',
         },
 
         import_diagram_dialog: {

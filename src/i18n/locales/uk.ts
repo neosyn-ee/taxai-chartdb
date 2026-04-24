@@ -48,6 +48,7 @@ export const uk: LanguageTranslation = {
                 backup: 'Резервне копіювання',
                 export_diagram: 'Експорт діаграми',
                 restore_diagram: 'Відновити діаграму',
+                versions: 'Versions',
             },
             help: {
                 help: 'Довідка',
@@ -483,6 +484,18 @@ export const uk: LanguageTranslation = {
                     'Щось пішло не так. Потрібна допомога? support@chartdb.io',
             },
         },
+
+        versions_dialog: {
+            title: 'Diagram Versions',
+            description:
+                'Automatic snapshots of your diagram. The last 3 edits are kept locally in your browser.',
+            empty: 'No versions saved yet. Start editing and a snapshot will appear shortly.',
+            meta: '{{tables}} tables · {{relationships}} relationships',
+            restore: 'Restore',
+            restoring: 'Restoring…',
+            close: 'Close',
+        },
+
         import_diagram_dialog: {
             title: 'Імпорт Діаграми',
             description: 'Вставте JSON діаграми нижче:',

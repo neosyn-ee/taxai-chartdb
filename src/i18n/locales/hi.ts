@@ -49,6 +49,7 @@ export const hi: LanguageTranslation = {
                 backup: 'बैकअप',
                 export_diagram: 'आरेख निर्यात करें',
                 restore_diagram: 'आरेख पुनर्स्थापित करें',
+                versions: 'Versions',
             },
             help: {
                 help: 'मदद',
@@ -489,6 +490,18 @@ export const hi: LanguageTranslation = {
             },
         },
         // TODO: Translate
+
+        versions_dialog: {
+            title: 'Diagram Versions',
+            description:
+                'Automatic snapshots of your diagram. The last 3 edits are kept locally in your browser.',
+            empty: 'No versions saved yet. Start editing and a snapshot will appear shortly.',
+            meta: '{{tables}} tables · {{relationships}} relationships',
+            restore: 'Restore',
+            restoring: 'Restoring…',
+            close: 'Close',
+        },
+
         import_diagram_dialog: {
             title: 'Import Diagram',
             description: 'Paste the diagram JSON below:',
