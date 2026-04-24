@@ -44,6 +44,11 @@ import { diagramSchema } from '@/lib/domain/diagram';
 import { diagramToJSONOutput } from '@/lib/export-import-utils';
 import { VERSION_SNAPSHOT_DEBOUNCE_MS } from '@/lib/domain/diagram-version';
 import { useDebounce } from '@/hooks/use-debounce-v2';
+import { useConfig } from '@/hooks/use-config';
+import {
+    ensureFolderPermission,
+    writeDiagramFile,
+} from '@/lib/file-system/file-system-folder';
 
 export interface ChartDBProviderProps {
     diagram?: Diagram;
@@ -1961,20 +1966,50 @@ export const ChartDBProvider: React.FC<
         [storageDB, loadDiagramFromData]
     );
 
+    const { config } = useConfig();
+    const saveMode = config?.saveMode ?? 'auto';
+    const folderHandle = config?.folderHandle;
+
     const lastSnapshotKeyRef = useRef<string>('');
 
+    const commitSnapshot = useCallback(async () => {
+        if (!diagramId || readonly) return;
+        const snapshot = diagramToJSONOutput(currentDiagram);
+        await storageDB.addDiagramVersion({ diagramId, snapshot });
+
+        if (folderHandle) {
+            try {
+                const allowed = await ensureFolderPermission(folderHandle);
+                if (allowed) {
+                    await writeDiagramFile({
+                        handle: folderHandle,
+                        diagramId,
+                        snapshot,
+                    });
+                }
+            } catch (error) {
+                console.error('Failed to write diagram to folder', error);
+            }
+        }
+
+        lastSnapshotKeyRef.current = `${diagramId}|${diagramUpdatedAt.getTime()}`;
+    }, [
+        diagramId,
+        readonly,
+        currentDiagram,
+        diagramUpdatedAt,
+        storageDB,
+        folderHandle,
+    ]);
+
     const persistSnapshot = useDebounce(
-        useCallback(async () => {
-            if (!diagramId || readonly) return;
-            const snapshot = diagramToJSONOutput(currentDiagram);
-            await storageDB.addDiagramVersion({ diagramId, snapshot });
-            lastSnapshotKeyRef.current = `${diagramId}|${diagramUpdatedAt.getTime()}`;
-        }, [diagramId, readonly, currentDiagram, diagramUpdatedAt, storageDB]),
+        commitSnapshot,
         VERSION_SNAPSHOT_DEBOUNCE_MS
     );
 
     useEffect(() => {
         if (!diagramId || readonly) return;
+        if (saveMode !== 'auto') return;
         const key = `${diagramId}|${diagramUpdatedAt.getTime()}`;
         const previous = lastSnapshotKeyRef.current;
         if (!previous || !previous.startsWith(`${diagramId}|`)) {
@@ -1983,7 +2018,11 @@ export const ChartDBProvider: React.FC<
         }
         if (previous === key) return;
         persistSnapshot();
-    }, [diagramId, diagramUpdatedAt, readonly, persistSnapshot]);
+    }, [diagramId, diagramUpdatedAt, readonly, saveMode, persistSnapshot]);
+
+    const saveNow: ChartDBContext['saveNow'] = useCallback(async () => {
+        await commitSnapshot();
+    }, [commitSnapshot]);
 
     const restoreDiagramVersion: ChartDBContext['restoreDiagramVersion'] =
         useCallback(
@@ -2211,6 +2250,7 @@ export const ChartDBProvider: React.FC<
                 loadDiagram,
                 loadDiagramFromData,
                 restoreDiagramVersion,
+                saveNow,
                 updateDatabaseType,
                 updateDatabaseEdition,
                 clearDiagramData,

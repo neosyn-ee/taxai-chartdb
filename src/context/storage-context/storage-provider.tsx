@@ -15,6 +15,7 @@ import type { Note } from '@/lib/domain/note';
 import type { DiagramVersion } from '@/lib/domain/diagram-version';
 import { VERSION_RETENTION } from '@/lib/domain/diagram-version';
 import { generateId } from '@/lib/utils';
+import { DEFAULT_SAVE_MODE } from '@/lib/domain/config';
 
 export const StorageProvider: React.FC<React.PropsWithChildren> = ({
     children,
@@ -263,6 +264,13 @@ export const StorageProvider: React.FC<React.PropsWithChildren> = ({
             diagram_versions: 'id, diagramId, createdAt',
         });
 
+        dexieDB.version(15).upgrade(async (tx) => {
+            const config = await tx.table('config').get(1);
+            if (config && config.saveMode === undefined) {
+                await tx.table('config').update(1, { saveMode: 'auto' });
+            }
+        });
+
         dexieDB.on('ready', async () => {
             const config = await dexieDB.config.get(1);
 
@@ -272,6 +280,7 @@ export const StorageProvider: React.FC<React.PropsWithChildren> = ({
                 await dexieDB.config.add({
                     id: 1,
                     defaultDiagramId: diagrams?.[0]?.id ?? '',
+                    saveMode: DEFAULT_SAVE_MODE,
                 });
             }
         });

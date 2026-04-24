@@ -491,6 +491,22 @@ export const te: LanguageTranslation = {
 
         // TODO: Translate
 
+        save_mode: {
+            save_now: 'Save',
+            saving: 'Saving…',
+            save_now_tooltip:
+                'Take a snapshot now (and write to folder if linked)',
+            auto: 'Auto-save',
+            manual: 'Manual save',
+            mode_label: 'Save mode',
+            folder_label: 'Repository folder',
+            link_folder: 'Link folder…',
+            change_folder: 'Change folder…',
+            unlink_folder: 'Unlink folder',
+            folder_unsupported:
+                'Requires a Chromium-based browser (Chrome / Edge / Brave)',
+        },
+
         versions_dialog: {
             title: 'Diagram Versions',
             description:
