@@ -49,6 +49,7 @@ export const de: LanguageTranslation = {
                 backup: 'Sicherung',
                 export_diagram: 'Diagramm exportieren',
                 restore_diagram: 'Diagramm wiederherstellen',
+                versions: 'Versions',
             },
             help: {
                 help: 'Hilfe',
@@ -352,6 +353,8 @@ export const de: LanguageTranslation = {
             back: 'Zurück',
             // TODO: Translate
             import_from_file: 'Import from File',
+            sync_from_folder: 'Open from linked folder',
+            link_folder: 'Link repository folder…',
             empty_diagram: 'Leere Datenbank',
             continue: 'Weiter',
             import: 'Importieren',
@@ -488,6 +491,34 @@ export const de: LanguageTranslation = {
             },
         },
         // TODO: Translate
+
+        save_mode: {
+            save_now: 'Save',
+            saving: 'Saving…',
+            save_now_tooltip:
+                'Take a snapshot now (and write to folder if linked)',
+            auto: 'Auto-save',
+            manual: 'Manual save',
+            mode_label: 'Save mode',
+            folder_label: 'Repository folder',
+            link_folder: 'Link folder…',
+            change_folder: 'Change folder…',
+            unlink_folder: 'Unlink folder',
+            folder_unsupported:
+                'Requires a Chromium-based browser (Chrome / Edge / Brave)',
+        },
+
+        versions_dialog: {
+            title: 'Diagram Versions',
+            description:
+                'Automatic snapshots of your diagram. The last 3 edits are kept locally in your browser.',
+            empty: 'No versions saved yet. Start editing and a snapshot will appear shortly.',
+            meta: '{{tables}} tables · {{relationships}} relationships',
+            restore: 'Restore',
+            restoring: 'Restoring…',
+            close: 'Close',
+        },
+
         import_diagram_dialog: {
             title: 'Import Diagram',
             description: 'Paste the diagram JSON below:',

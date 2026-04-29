@@ -50,6 +50,7 @@ export const gu: LanguageTranslation = {
                 backup: 'બેકઅપ',
                 export_diagram: 'ડાયાગ્રામ નિકાસ કરો',
                 restore_diagram: 'ડાયાગ્રામ પુનઃસ્થાપિત કરો',
+                versions: 'Versions',
             },
             help: {
                 help: 'મદદ',
@@ -348,6 +349,8 @@ export const gu: LanguageTranslation = {
             cancel: 'રદ કરો',
             back: 'પાછા',
             import_from_file: 'ફાઇલમાંથી આયાત કરો',
+            sync_from_folder: 'Open from linked folder',
+            link_folder: 'Link repository folder…',
             empty_diagram: 'ખાલી ડેટાબેસ',
             continue: 'ચાલુ રાખો',
             import: 'આયાત કરો',
@@ -483,6 +486,33 @@ export const gu: LanguageTranslation = {
                 description:
                     'કશુક તો ખોટું થયું. મદદ જોઈએ? support@chartdb.io પર સંપર્ક કરો.',
             },
+        },
+
+        save_mode: {
+            save_now: 'Save',
+            saving: 'Saving…',
+            save_now_tooltip:
+                'Take a snapshot now (and write to folder if linked)',
+            auto: 'Auto-save',
+            manual: 'Manual save',
+            mode_label: 'Save mode',
+            folder_label: 'Repository folder',
+            link_folder: 'Link folder…',
+            change_folder: 'Change folder…',
+            unlink_folder: 'Unlink folder',
+            folder_unsupported:
+                'Requires a Chromium-based browser (Chrome / Edge / Brave)',
+        },
+
+        versions_dialog: {
+            title: 'Diagram Versions',
+            description:
+                'Automatic snapshots of your diagram. The last 3 edits are kept locally in your browser.',
+            empty: 'No versions saved yet. Start editing and a snapshot will appear shortly.',
+            meta: '{{tables}} tables · {{relationships}} relationships',
+            restore: 'Restore',
+            restoring: 'Restoring…',
+            close: 'Close',
         },
 
         import_diagram_dialog: {

@@ -147,6 +147,98 @@ VITE_LLM_MODEL_NAME=Qwen/Qwen2.5-32B-Instruct-AWQ
 5. Copy and paste the resulting JSON set into ChartDB.
 6. Enjoy Viewing & Editing!
 
+## Neosyn fork — Versioning & repository sync
+
+This fork extends upstream ChartDB with two features aimed at teams that
+want their UML diagrams to live inside a git repository, without adding a
+backend service. Both features are 100% client-side.
+
+### 1. Automatic UML versioning (IndexedDB)
+
+Every time you edit a diagram, a JSON snapshot is taken **5 seconds after
+your last change** and stored locally (IndexedDB, `diagram_versions`
+table). Only the **last 3 snapshots per diagram** are kept — older ones
+are pruned automatically.
+
+Access the history from **Backup → Versions** in the top menu. From the
+dialog you can see timestamp, table count and relationship count of each
+snapshot, and restore any of them. Restoring replaces the current
+diagram content but **does not delete the other snapshots**, so you can
+roll forward again if needed.
+
+### 2. Save mode toggle + repository folder sync
+
+The top-right corner exposes a new **Save** control:
+
+- A **Save** button that takes a snapshot on demand.
+- A dropdown with two sections:
+  - **Save mode** — radio toggle between:
+    - `Auto-save` (default): snapshots happen automatically after each
+      edit, debounced 5s.
+    - `Manual save`: no automatic snapshots. Only the **Save** button
+      triggers a snapshot.
+  - **Repository folder** — link a local folder (e.g. the folder where
+    your project's git repo lives). Once linked, every snapshot (auto
+    or manual) also writes the diagram JSON to that folder as
+    `<diagramId>.chartdb.json`. You can then commit the file with git
+    as part of your normal workflow.
+
+The chosen folder is remembered across sessions. On the first write of
+each browser session, the browser may show a one-time permission
+prompt (standard OS security behaviour) — click **Allow** and the
+linked folder works silently for the rest of the session.
+
+### How to use it (step by step)
+
+1. Open or create a diagram in ChartDB.
+2. In the top-right **Save** dropdown, choose your preferred mode:
+   - **Auto-save** if you want transparent snapshots while you edit.
+   - **Manual save** if you prefer explicit control (useful for clean
+     git diffs).
+3. (Optional) Click **Link folder…** and pick the folder where you
+   want the UML files to live. Typically this is a folder inside your
+   project repository, e.g. `docs/uml/` or `db/schema/`.
+4. Edit freely. In auto mode, a snapshot (IndexedDB + file if folder
+   linked) is written 5 seconds after your last edit. In manual mode,
+   snapshots happen only when you click **Save**.
+5. Commit `<diagramId>.chartdb.json` as you would with any other
+   source file.
+6. To roll back to a previous state, open **Backup → Versions** and
+   restore the snapshot you want.
+
+### Browser support
+
+The repository folder feature uses the **File System Access API**,
+which is currently supported only on Chromium-based browsers
+(Chrome, Edge, Brave, Arc, Opera). On Firefox and Safari the folder
+controls appear disabled with an informative tooltip; auto/manual
+save and IndexedDB versioning still work normally.
+
+### Where is data stored?
+
+- **IndexedDB database** `ChartDB` (schema v15+):
+  - `diagrams`, `db_tables`, `db_relationships`, `db_dependencies`,
+    `areas`, `db_custom_types`, `notes` — the diagram entities
+    (unchanged from upstream).
+  - `diagram_versions` — snapshot history (last 3 per diagram).
+  - `config` — app config, now also stores `saveMode` and the linked
+    `folderHandle` (so the chosen folder is remembered across reloads).
+- **Linked folder** (if configured): one JSON file per diagram,
+  `<diagramId>.chartdb.json`, overwritten on every save.
+
+Deleting a diagram from the app removes its entities **and** its
+version history from IndexedDB. Files previously written to the
+linked folder are left untouched — delete them manually if needed.
+
+### File naming rationale
+
+Files are named after the internal diagram id (not the display name)
+so that renaming a diagram does not create orphaned files in the
+folder. If you want a human-readable file name, rename the file
+manually in git after the first write; subsequent saves will write
+back to the original `<diagramId>.chartdb.json`, so do not use
+renames as an identity mechanism.
+
 ## 💚 Community & Support
 
 - [Discord](https://discord.gg/QeFwyWSKwC) (For live discussion with the community and the ChartDB team)

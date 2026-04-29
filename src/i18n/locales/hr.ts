@@ -48,6 +48,7 @@ export const hr: LanguageTranslation = {
                 backup: 'Sigurnosna kopija',
                 export_diagram: 'Izvezi dijagram',
                 restore_diagram: 'Vrati dijagram',
+                versions: 'Versions',
             },
             help: {
                 help: 'Pomoć',
@@ -343,6 +344,8 @@ export const hr: LanguageTranslation = {
 
             cancel: 'Odustani',
             import_from_file: 'Uvezi iz datoteke',
+            sync_from_folder: 'Open from linked folder',
+            link_folder: 'Link repository folder…',
             back: 'Natrag',
             empty_diagram: 'Prazna baza podataka',
             continue: 'Nastavi',
@@ -477,6 +480,33 @@ export const hr: LanguageTranslation = {
                 description:
                     'Nešto je pošlo po zlu. Trebate pomoć? support@chartdb.io',
             },
+        },
+
+        save_mode: {
+            save_now: 'Save',
+            saving: 'Saving…',
+            save_now_tooltip:
+                'Take a snapshot now (and write to folder if linked)',
+            auto: 'Auto-save',
+            manual: 'Manual save',
+            mode_label: 'Save mode',
+            folder_label: 'Repository folder',
+            link_folder: 'Link folder…',
+            change_folder: 'Change folder…',
+            unlink_folder: 'Unlink folder',
+            folder_unsupported:
+                'Requires a Chromium-based browser (Chrome / Edge / Brave)',
+        },
+
+        versions_dialog: {
+            title: 'Diagram Versions',
+            description:
+                'Automatic snapshots of your diagram. The last 3 edits are kept locally in your browser.',
+            empty: 'No versions saved yet. Start editing and a snapshot will appear shortly.',
+            meta: '{{tables}} tables · {{relationships}} relationships',
+            restore: 'Restore',
+            restoring: 'Restoring…',
+            close: 'Close',
         },
 
         import_diagram_dialog: {

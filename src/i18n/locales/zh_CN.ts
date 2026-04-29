@@ -49,6 +49,7 @@ export const zh_CN: LanguageTranslation = {
                 backup: '备份',
                 export_diagram: '导出关系图',
                 restore_diagram: '还原图表',
+                versions: 'Versions',
             },
             help: {
                 help: '帮助',
@@ -341,6 +342,8 @@ export const zh_CN: LanguageTranslation = {
 
             cancel: '取消',
             import_from_file: '从文件导入',
+            sync_from_folder: 'Open from linked folder',
+            link_folder: 'Link repository folder…',
             back: '上一步',
             empty_diagram: '空数据库',
             continue: '下一步',
@@ -473,6 +476,33 @@ export const zh_CN: LanguageTranslation = {
                 description:
                     'Something went wrong. Need help? support@chartdb.io',
             },
+        },
+
+        save_mode: {
+            save_now: 'Save',
+            saving: 'Saving…',
+            save_now_tooltip:
+                'Take a snapshot now (and write to folder if linked)',
+            auto: 'Auto-save',
+            manual: 'Manual save',
+            mode_label: 'Save mode',
+            folder_label: 'Repository folder',
+            link_folder: 'Link folder…',
+            change_folder: 'Change folder…',
+            unlink_folder: 'Unlink folder',
+            folder_unsupported:
+                'Requires a Chromium-based browser (Chrome / Edge / Brave)',
+        },
+
+        versions_dialog: {
+            title: 'Diagram Versions',
+            description:
+                'Automatic snapshots of your diagram. The last 3 edits are kept locally in your browser.',
+            empty: 'No versions saved yet. Start editing and a snapshot will appear shortly.',
+            meta: '{{tables}} tables · {{relationships}} relationships',
+            restore: 'Restore',
+            restoring: 'Restoring…',
+            close: 'Close',
         },
 
         import_diagram_dialog: {

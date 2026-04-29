@@ -46,6 +46,7 @@ export const Menu: React.FC<MenuProps> = () => {
         openExportImageDialog,
         openExportDiagramDialog,
         openImportDiagramDialog,
+        openVersionsDialog,
     } = useDialog();
     const { showAlert } = useAlert();
     const { setTheme, theme } = useTheme();
@@ -482,6 +483,9 @@ export const Menu: React.FC<MenuProps> = () => {
                     </MenubarItem>
                     <MenubarItem onClick={openImportDiagramDialog}>
                         {t('menu.backup.restore_diagram')}
+                    </MenubarItem>
+                    <MenubarItem onClick={openVersionsDialog}>
+                        {t('menu.backup.versions')}
                     </MenubarItem>
                 </MenubarContent>
             </MenubarMenu>

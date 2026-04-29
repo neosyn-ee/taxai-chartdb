@@ -49,6 +49,7 @@ export const vi: LanguageTranslation = {
                 backup: 'Hỗ trợ',
                 export_diagram: 'Xuất sơ đồ',
                 restore_diagram: 'Khôi phục sơ đồ',
+                versions: 'Versions',
             },
             help: {
                 help: 'Trợ giúp',
@@ -347,6 +348,8 @@ export const vi: LanguageTranslation = {
 
             cancel: 'Hủy',
             import_from_file: 'Nhập từ tệp',
+            sync_from_folder: 'Open from linked folder',
+            link_folder: 'Link repository folder…',
             back: 'Trở lại',
             empty_diagram: 'Cơ sở dữ liệu trống',
             continue: 'Tiếp tục',
@@ -481,6 +484,33 @@ export const vi: LanguageTranslation = {
                 description:
                     'Có gì đó không ổn. Cần trợ giúp? support@chartdb.io',
             },
+        },
+
+        save_mode: {
+            save_now: 'Save',
+            saving: 'Saving…',
+            save_now_tooltip:
+                'Take a snapshot now (and write to folder if linked)',
+            auto: 'Auto-save',
+            manual: 'Manual save',
+            mode_label: 'Save mode',
+            folder_label: 'Repository folder',
+            link_folder: 'Link folder…',
+            change_folder: 'Change folder…',
+            unlink_folder: 'Unlink folder',
+            folder_unsupported:
+                'Requires a Chromium-based browser (Chrome / Edge / Brave)',
+        },
+
+        versions_dialog: {
+            title: 'Diagram Versions',
+            description:
+                'Automatic snapshots of your diagram. The last 3 edits are kept locally in your browser.',
+            empty: 'No versions saved yet. Start editing and a snapshot will appear shortly.',
+            meta: '{{tables}} tables · {{relationships}} relationships',
+            restore: 'Restore',
+            restoring: 'Restoring…',
+            close: 'Close',
         },
 
         import_diagram_dialog: {

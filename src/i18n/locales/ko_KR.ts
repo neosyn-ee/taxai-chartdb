@@ -49,6 +49,7 @@ export const ko_KR: LanguageTranslation = {
                 backup: '백업',
                 export_diagram: '다이어그램 내보내기',
                 restore_diagram: '다이어그램 복구',
+                versions: 'Versions',
             },
             help: {
                 help: '도움말',
@@ -348,6 +349,8 @@ export const ko_KR: LanguageTranslation = {
             cancel: '취소',
             back: '뒤로가기',
             import_from_file: '파일에서 가져오기',
+            sync_from_folder: 'Open from linked folder',
+            link_folder: 'Link repository folder…',
             empty_diagram: '빈 데이터베이스',
             continue: '계속',
             import: '가져오기',
@@ -482,6 +485,34 @@ export const ko_KR: LanguageTranslation = {
                     '무언가 문제가 발생하였습니다. 도움이 필요하신 경우 support@chartdb.io으로 연락해주세요.',
             },
         },
+
+        save_mode: {
+            save_now: 'Save',
+            saving: 'Saving…',
+            save_now_tooltip:
+                'Take a snapshot now (and write to folder if linked)',
+            auto: 'Auto-save',
+            manual: 'Manual save',
+            mode_label: 'Save mode',
+            folder_label: 'Repository folder',
+            link_folder: 'Link folder…',
+            change_folder: 'Change folder…',
+            unlink_folder: 'Unlink folder',
+            folder_unsupported:
+                'Requires a Chromium-based browser (Chrome / Edge / Brave)',
+        },
+
+        versions_dialog: {
+            title: 'Diagram Versions',
+            description:
+                'Automatic snapshots of your diagram. The last 3 edits are kept locally in your browser.',
+            empty: 'No versions saved yet. Start editing and a snapshot will appear shortly.',
+            meta: '{{tables}} tables · {{relationships}} relationships',
+            restore: 'Restore',
+            restoring: 'Restoring…',
+            close: 'Close',
+        },
+
         import_diagram_dialog: {
             title: '다이어그램 가져오기',
             description: '아래에 다이어그램 JSON을 첨부해주세요:',

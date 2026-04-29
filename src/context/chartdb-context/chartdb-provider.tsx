@@ -1,4 +1,10 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, {
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from 'react';
 import type { DBTable } from '@/lib/domain/db-table';
 import { deepCopy, generateId } from '@/lib/utils';
 import { defaultTableColor, randomColor, viewColor } from '@/lib/colors';
@@ -34,6 +40,20 @@ import {
     type DBCustomType,
 } from '@/lib/domain/db-custom-type';
 import { getDefaultPrimaryKeyType } from '@/lib/data/data-types/data-types';
+import { diagramSchema } from '@/lib/domain/diagram';
+import { diagramToJSONOutput } from '@/lib/export-import-utils';
+import { VERSION_SNAPSHOT_DEBOUNCE_MS } from '@/lib/domain/diagram-version';
+import { useDebounce } from '@/hooks/use-debounce-v2';
+import { useConfig } from '@/hooks/use-config';
+import {
+    ensureFolderPermission,
+    listDiagramFiles,
+    queryFolderPermission,
+    writeDiagramFile,
+} from '@/lib/file-system/file-system-folder';
+import { syncDiagramsFromFolder } from '@/lib/file-system/sync-from-folder';
+import { toast } from '@/components/toast/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 export interface ChartDBProviderProps {
     diagram?: Diagram;
@@ -1951,6 +1971,217 @@ export const ChartDBProvider: React.FC<
         [storageDB, loadDiagramFromData]
     );
 
+    const { config } = useConfig();
+    const saveMode = config?.saveMode ?? 'auto';
+    const folderHandle = config?.folderHandle;
+    const navigate = useNavigate();
+
+    const lastSnapshotKeyRef = useRef<string>('');
+
+    const commitSnapshot = useCallback(async () => {
+        if (!diagramId || readonly) return;
+        const snapshot = diagramToJSONOutput(currentDiagram);
+        await storageDB.addDiagramVersion({ diagramId, snapshot });
+
+        if (folderHandle) {
+            try {
+                const allowed = await ensureFolderPermission(folderHandle);
+                if (allowed) {
+                    await writeDiagramFile({
+                        handle: folderHandle,
+                        diagramId,
+                        snapshot,
+                    });
+                }
+            } catch (error) {
+                console.error('Failed to write diagram to folder', error);
+            }
+        }
+
+        lastSnapshotKeyRef.current = `${diagramId}|${diagramUpdatedAt.getTime()}`;
+    }, [
+        diagramId,
+        readonly,
+        currentDiagram,
+        diagramUpdatedAt,
+        storageDB,
+        folderHandle,
+    ]);
+
+    const persistSnapshot = useDebounce(
+        commitSnapshot,
+        VERSION_SNAPSHOT_DEBOUNCE_MS
+    );
+
+    useEffect(() => {
+        if (!diagramId || readonly) return;
+        if (saveMode !== 'auto') return;
+        const key = `${diagramId}|${diagramUpdatedAt.getTime()}`;
+        const previous = lastSnapshotKeyRef.current;
+        if (!previous || !previous.startsWith(`${diagramId}|`)) {
+            lastSnapshotKeyRef.current = key;
+            return;
+        }
+        if (previous === key) return;
+        persistSnapshot();
+    }, [diagramId, diagramUpdatedAt, readonly, saveMode, persistSnapshot]);
+
+    const folderSyncDoneRef = useRef(false);
+    const [folderSyncStatus, setFolderSyncStatus] = useState<
+        'idle' | 'pending' | 'done'
+    >('idle');
+
+    const runFolderSync = useCallback(
+        async (handle: FileSystemDirectoryHandle) => {
+            if (folderSyncDoneRef.current) return;
+            try {
+                const entries = await listDiagramFiles(handle);
+                if (entries.length === 0) {
+                    folderSyncDoneRef.current = true;
+                    return;
+                }
+
+                const summary = await syncDiagramsFromFolder({
+                    storage: storageDB,
+                    entries,
+                });
+
+                folderSyncDoneRef.current = true;
+
+                const total = summary.imported + summary.updated;
+                if (total > 0) {
+                    toast({
+                        title: 'Repository folder synced',
+                        description: `${summary.imported} imported, ${summary.updated} updated, ${summary.skipped} skipped`,
+                    });
+                }
+
+                const touched = entries.some(
+                    (entry) => entry.diagramId === diagramId
+                );
+                if (touched && diagramId) {
+                    await loadDiagram(diagramId);
+                } else if (summary.imported > 0 && !diagramId && entries[0]) {
+                    navigate(`/diagrams/${entries[0].diagramId}`);
+                }
+            } catch (error) {
+                console.error('Folder sync failed', error);
+            }
+        },
+        [storageDB, diagramId, loadDiagram, navigate]
+    );
+
+    const syncFromFolder: ChartDBContext['syncFromFolder'] =
+        useCallback(async () => {
+            if (!folderHandle) return;
+            const allowed = await ensureFolderPermission(folderHandle);
+            if (!allowed) return;
+            folderSyncDoneRef.current = false;
+            await runFolderSync(folderHandle);
+        }, [folderHandle, runFolderSync]);
+
+    const saveNow: ChartDBContext['saveNow'] = useCallback(async () => {
+        await commitSnapshot();
+        if (!folderHandle || folderSyncDoneRef.current) return;
+        const allowed = await ensureFolderPermission(folderHandle);
+        if (allowed) {
+            await runFolderSync(folderHandle);
+        }
+    }, [commitSnapshot, folderHandle, runFolderSync]);
+
+    useEffect(() => {
+        if (folderSyncDoneRef.current) return;
+        if (!folderHandle) {
+            setFolderSyncStatus('done');
+            return;
+        }
+
+        let cancelled = false;
+        setFolderSyncStatus('pending');
+
+        const run = async () => {
+            try {
+                const permission = await queryFolderPermission(folderHandle);
+                if (permission === 'denied') {
+                    folderSyncDoneRef.current = true;
+                    return;
+                }
+                if (permission !== 'granted') return;
+                if (cancelled) return;
+                await runFolderSync(folderHandle);
+            } finally {
+                if (!cancelled) setFolderSyncStatus('done');
+            }
+        };
+
+        run();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [folderHandle, runFolderSync]);
+
+    const restoreDiagramVersion: ChartDBContext['restoreDiagramVersion'] =
+        useCallback(
+            async (versionId) => {
+                if (!diagramId) return;
+                const versions = await storageDB.listDiagramVersions(diagramId);
+                const target = versions.find((v) => v.id === versionId);
+                if (!target) return;
+
+                const restored = diagramSchema.parse({
+                    ...JSON.parse(target.snapshot),
+                    id: diagramId,
+                    createdAt: diagramCreatedAt,
+                    updatedAt: new Date(),
+                });
+
+                await Promise.all([
+                    storageDB.deleteDiagramTables(diagramId),
+                    storageDB.deleteDiagramRelationships(diagramId),
+                    storageDB.deleteDiagramDependencies(diagramId),
+                    storageDB.deleteDiagramAreas(diagramId),
+                    storageDB.deleteDiagramCustomTypes(diagramId),
+                    storageDB.deleteDiagramNotes(diagramId),
+                ]);
+
+                await storageDB.updateDiagram({
+                    id: diagramId,
+                    attributes: {
+                        name: restored.name,
+                        databaseType: restored.databaseType,
+                        databaseEdition: restored.databaseEdition,
+                        updatedAt: restored.updatedAt,
+                    },
+                });
+
+                await Promise.all([
+                    ...(restored.tables ?? []).map((table) =>
+                        storageDB.addTable({ diagramId, table })
+                    ),
+                    ...(restored.relationships ?? []).map((relationship) =>
+                        storageDB.addRelationship({ diagramId, relationship })
+                    ),
+                    ...(restored.dependencies ?? []).map((dependency) =>
+                        storageDB.addDependency({ diagramId, dependency })
+                    ),
+                    ...(restored.areas ?? []).map((area) =>
+                        storageDB.addArea({ diagramId, area })
+                    ),
+                    ...(restored.customTypes ?? []).map((customType) =>
+                        storageDB.addCustomType({ diagramId, customType })
+                    ),
+                    ...(restored.notes ?? []).map((note) =>
+                        storageDB.addNote({ diagramId, note })
+                    ),
+                ]);
+
+                lastSnapshotKeyRef.current = `${diagramId}|${restored.updatedAt.getTime()}`;
+                loadDiagramFromData(restored);
+            },
+            [diagramId, diagramCreatedAt, storageDB, loadDiagramFromData]
+        );
+
     // Custom type operations
     const getCustomType: ChartDBContext['getCustomType'] = useCallback(
         (id: string) => customTypes.find((type) => type.id === id) ?? null,
@@ -2115,6 +2346,10 @@ export const ChartDBProvider: React.FC<
                 updateDiagramName,
                 loadDiagram,
                 loadDiagramFromData,
+                restoreDiagramVersion,
+                saveNow,
+                syncFromFolder,
+                folderSyncStatus,
                 updateDatabaseType,
                 updateDatabaseEdition,
                 clearDiagramData,

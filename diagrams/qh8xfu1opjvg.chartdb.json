@@ -1,0 +1,4863 @@
+{
+  "id": "0",
+  "name": "TAXAI",
+  "createdAt": "2026-04-29T10:44:12.867Z",
+  "updatedAt": "2026-04-29T13:07:15.315Z",
+  "databaseType": "postgresql",
+  "tables": [
+    {
+      "id": "1",
+      "name": "notification_template",
+      "schema": "public",
+      "x": -1849.1104530643493,
+      "y": -1058.500831116618,
+      "fields": [
+        {
+          "id": "2",
+          "name": "id",
+          "type": {
+            "id": "serial",
+            "name": "serial"
+          },
+          "primaryKey": true,
+          "unique": false,
+          "nullable": false,
+          "increment": true,
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "3",
+          "name": "name",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433,
+          "comments": "Internal identifier (password_reset, monitoring_update, etc.)"
+        },
+        {
+          "id": "4",
+          "name": "channel",
+          "type": {
+            "id": "notification_channel",
+            "name": "notification_channel"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433,
+          "default": "email"
+        },
+        {
+          "id": "5",
+          "name": "subject",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109433,
+          "comments": "Email subject template with placeholders"
+        },
+        {
+          "id": "6",
+          "name": "body_template",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433,
+          "comments": "Email body template (HTML/text with placeholders)"
+        },
+        {
+          "id": "7",
+          "name": "is_active",
+          "type": {
+            "id": "boolean",
+            "name": "boolean"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433,
+          "default": "true"
+        },
+        {
+          "id": "8",
+          "name": "created_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433,
+          "default": "now()"
+        },
+        {
+          "id": "9",
+          "name": "updated_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433,
+          "default": "now()"
+        }
+      ],
+      "indexes": [
+        {
+          "id": "10",
+          "name": "",
+          "unique": true,
+          "fieldIds": [
+            "2"
+          ],
+          "createdAt": 1777459109433,
+          "isPrimaryKey": true
+        }
+      ],
+      "color": "#8eb7ff",
+      "isView": false,
+      "createdAt": 1777459109433,
+      "order": 15,
+      "parentAreaId": "359",
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "11",
+      "name": "probabilistic_estimate",
+      "schema": "public",
+      "x": 2141.9527919589177,
+      "y": -1047.4893134737486,
+      "fields": [
+        {
+          "id": "12",
+          "name": "id",
+          "type": {
+            "id": "serial",
+            "name": "serial"
+          },
+          "primaryKey": true,
+          "unique": false,
+          "nullable": false,
+          "increment": true,
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "13",
+          "name": "tenant_id",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "14",
+          "name": "legal_entity_id",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "15",
+          "name": "case_id",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109433,
+          "comments": "Optional: linked to a specific case"
+        },
+        {
+          "id": "16",
+          "name": "created_by",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "17",
+          "name": "description",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433,
+          "comments": "Natural language case description"
+        },
+        {
+          "id": "18",
+          "name": "score",
+          "type": {
+            "id": "float",
+            "name": "float"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433,
+          "comments": "Probability score 0.0 to 1.0"
+        },
+        {
+          "id": "19",
+          "name": "category",
+          "type": {
+            "id": "probability_category",
+            "name": "probability_category"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "20",
+          "name": "analysis",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109433,
+          "comments": "AI-generated reasoning and explanation"
+        },
+        {
+          "id": "21",
+          "name": "sources",
+          "type": {
+            "id": "jsonb",
+            "name": "jsonb"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109433,
+          "comments": "Cited sources: [{title, reference, court, date, url}]"
+        },
+        {
+          "id": "22",
+          "name": "recalculation_count",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433,
+          "default": "0"
+        },
+        {
+          "id": "23",
+          "name": "last_recalculated_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "24",
+          "name": "next_recalculation_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "25",
+          "name": "created_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433,
+          "default": "now()"
+        },
+        {
+          "id": "26",
+          "name": "updated_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433,
+          "default": "now()"
+        },
+        {
+          "id": "27",
+          "name": "deleted_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109433,
+          "comments": "Soft delete"
+        }
+      ],
+      "indexes": [
+        {
+          "id": "28",
+          "name": "",
+          "unique": true,
+          "fieldIds": [
+            "12"
+          ],
+          "createdAt": 1777459109433,
+          "isPrimaryKey": true
+        },
+        {
+          "id": "29",
+          "name": "probabilistic_estimate_tenant_idx",
+          "unique": false,
+          "fieldIds": [
+            "13"
+          ],
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "30",
+          "name": "probabilistic_estimate_legal_entity_idx",
+          "unique": false,
+          "fieldIds": [
+            "14"
+          ],
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "31",
+          "name": "probabilistic_estimate_case_idx",
+          "unique": false,
+          "fieldIds": [
+            "15"
+          ],
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "32",
+          "name": "probabilistic_estimate_category_idx",
+          "unique": false,
+          "fieldIds": [
+            "19"
+          ],
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "33",
+          "name": "probabilistic_estimate_next_recalc_idx",
+          "unique": false,
+          "fieldIds": [
+            "24"
+          ],
+          "createdAt": 1777459109433
+        }
+      ],
+      "color": "#8eb7ff",
+      "isView": false,
+      "createdAt": 1777459109433,
+      "order": 13,
+      "expanded": true,
+      "parentAreaId": "357",
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "34",
+      "name": "tenant",
+      "schema": "public",
+      "x": -547.7945697953242,
+      "y": -731.2340502953211,
+      "fields": [
+        {
+          "id": "35",
+          "name": "id",
+          "type": {
+            "id": "serial",
+            "name": "serial"
+          },
+          "primaryKey": true,
+          "unique": false,
+          "nullable": false,
+          "increment": true,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "36",
+          "name": "name",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109432,
+          "comments": "Organization / Studio name"
+        },
+        {
+          "id": "37",
+          "name": "vat_number",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432,
+          "comments": "Partita IVA"
+        },
+        {
+          "id": "38",
+          "name": "fiscal_code",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432,
+          "comments": "Codice fiscale azienda"
+        },
+        {
+          "id": "39",
+          "name": "email",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "40",
+          "name": "phone",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "41",
+          "name": "address",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "42",
+          "name": "city",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "43",
+          "name": "province",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "44",
+          "name": "postal_code",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "45",
+          "name": "country",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432,
+          "default": "IT"
+        },
+        {
+          "id": "46",
+          "name": "status",
+          "type": {
+            "id": "tenant_status",
+            "name": "tenant_status"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109432,
+          "default": "pending"
+        },
+        {
+          "id": "47",
+          "name": "subscription_plan_id",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "48",
+          "name": "stripe_customer_id",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432,
+          "comments": "Stripe Customer object ID"
+        },
+        {
+          "id": "49",
+          "name": "stripe_subscription_id",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432,
+          "comments": "Stripe Subscription object ID"
+        },
+        {
+          "id": "50",
+          "name": "subscription_status",
+          "type": {
+            "id": "subscription_status",
+            "name": "subscription_status"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432,
+          "comments": "Mirrors Stripe subscription status"
+        },
+        {
+          "id": "51",
+          "name": "subscription_started_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "52",
+          "name": "subscription_expires_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "53",
+          "name": "trial_ends_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "54",
+          "name": "created_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109432,
+          "default": "now()"
+        },
+        {
+          "id": "55",
+          "name": "updated_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109432,
+          "default": "now()"
+        },
+        {
+          "id": "56",
+          "name": "deleted_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432,
+          "comments": "Soft delete"
+        }
+      ],
+      "indexes": [
+        {
+          "id": "57",
+          "name": "",
+          "unique": true,
+          "fieldIds": [
+            "35"
+          ],
+          "createdAt": 1777459109432,
+          "isPrimaryKey": true
+        },
+        {
+          "id": "58",
+          "name": "tenant_stripe_customer_uq",
+          "unique": true,
+          "fieldIds": [
+            "48"
+          ],
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "59",
+          "name": "tenant_stripe_subscription_uq",
+          "unique": true,
+          "fieldIds": [
+            "49"
+          ],
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "60",
+          "name": "tenant_status_idx",
+          "unique": false,
+          "fieldIds": [
+            "46"
+          ],
+          "createdAt": 1777459109432
+        }
+      ],
+      "color": "#8eb7ff",
+      "isView": false,
+      "createdAt": 1777459109432,
+      "order": 3,
+      "expanded": true,
+      "parentAreaId": "360",
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "61",
+      "name": "stripe_webhook_event",
+      "schema": "public",
+      "x": -595.923661851031,
+      "y": -1687.8756353648932,
+      "fields": [
+        {
+          "id": "62",
+          "name": "id",
+          "type": {
+            "id": "serial",
+            "name": "serial"
+          },
+          "primaryKey": true,
+          "unique": false,
+          "nullable": false,
+          "increment": true,
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "63",
+          "name": "stripe_event_id",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433,
+          "comments": "Stripe event ID for idempotency"
+        },
+        {
+          "id": "64",
+          "name": "event_type",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433,
+          "comments": "e.g. invoice.paid, customer.subscription.updated"
+        },
+        {
+          "id": "65",
+          "name": "payload",
+          "type": {
+            "id": "jsonb",
+            "name": "jsonb"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "66",
+          "name": "processed",
+          "type": {
+            "id": "boolean",
+            "name": "boolean"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433,
+          "default": "false"
+        },
+        {
+          "id": "67",
+          "name": "processed_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "68",
+          "name": "error_message",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "69",
+          "name": "created_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433,
+          "default": "now()"
+        }
+      ],
+      "indexes": [
+        {
+          "id": "70",
+          "name": "",
+          "unique": true,
+          "fieldIds": [
+            "62"
+          ],
+          "createdAt": 1777459109433,
+          "isPrimaryKey": true
+        },
+        {
+          "id": "71",
+          "name": "stripe_webhook_event_stripe_id_uq",
+          "unique": true,
+          "fieldIds": [
+            "63"
+          ],
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "72",
+          "name": "stripe_webhook_event_type_processed_idx",
+          "unique": false,
+          "fieldIds": [
+            "64",
+            "66"
+          ],
+          "createdAt": 1777459109433
+        }
+      ],
+      "color": "#8eb7ff",
+      "isView": false,
+      "createdAt": 1777459109433,
+      "comments": "Idempotent webhook processing. Keeps full Stripe event payload for debugging.",
+      "order": 17,
+      "parentAreaId": "358",
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "73",
+      "name": "chat_session",
+      "schema": "public",
+      "x": 1638.2822543173509,
+      "y": -1045.9085525281798,
+      "fields": [
+        {
+          "id": "74",
+          "name": "id",
+          "type": {
+            "id": "serial",
+            "name": "serial"
+          },
+          "primaryKey": true,
+          "unique": false,
+          "nullable": false,
+          "increment": true,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "75",
+          "name": "tenant_id",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "76",
+          "name": "user_id",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "77",
+          "name": "case_id",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109433,
+          "comments": "Optional: chat within a specific case context"
+        },
+        {
+          "id": "78",
+          "name": "legal_entity_id",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109433,
+          "comments": "Optional: chat within a specific case context"
+        },
+        {
+          "id": "79",
+          "name": "title",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109433,
+          "comments": "Auto-generated or user-defined session title"
+        },
+        {
+          "id": "80",
+          "name": "context_snapshot",
+          "type": {
+            "id": "jsonb",
+            "name": "jsonb"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433,
+          "comments": "Frozen copy of user profile + legal entities at session start"
+        },
+        {
+          "id": "81",
+          "name": "last_message_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "82",
+          "name": "created_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433,
+          "default": "now()"
+        },
+        {
+          "id": "83",
+          "name": "updated_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433,
+          "default": "now()"
+        },
+        {
+          "id": "84",
+          "name": "deleted_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109433,
+          "comments": "Soft delete"
+        }
+      ],
+      "indexes": [
+        {
+          "id": "85",
+          "name": "",
+          "unique": true,
+          "fieldIds": [
+            "74"
+          ],
+          "createdAt": 1777459109433,
+          "isPrimaryKey": true
+        },
+        {
+          "id": "86",
+          "name": "chat_session_tenant_idx",
+          "unique": false,
+          "fieldIds": [
+            "75"
+          ],
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "87",
+          "name": "chat_session_user_idx",
+          "unique": false,
+          "fieldIds": [
+            "76"
+          ],
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "88",
+          "name": "chat_session_case_idx",
+          "unique": false,
+          "fieldIds": [
+            "77"
+          ],
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "89",
+          "name": "chat_session_last_message_idx",
+          "unique": false,
+          "fieldIds": [
+            "81"
+          ],
+          "createdAt": 1777459109433
+        }
+      ],
+      "color": "#8eb7ff",
+      "isView": false,
+      "createdAt": 1777459109433,
+      "order": 9,
+      "parentAreaId": "357",
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "90",
+      "name": "monitored_case",
+      "schema": "public",
+      "x": 2843.1266827772997,
+      "y": -1033.2599666366884,
+      "fields": [
+        {
+          "id": "91",
+          "name": "id",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": true,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "92",
+          "name": "tenant_id",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "93",
+          "name": "legal_entity_id",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "94",
+          "name": "created_by",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "95",
+          "name": "case_id",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777467931776
+        },
+        {
+          "id": "96",
+          "name": "scenario",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433,
+          "comments": "Natural language description of monitoring scenario"
+        },
+        {
+          "id": "97",
+          "name": "frequency",
+          "type": {
+            "id": "monitoring_frequency",
+            "name": "monitoring_frequency"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433,
+          "default": "weekly"
+        },
+        {
+          "id": "98",
+          "name": "status",
+          "type": {
+            "id": "monitoring_status",
+            "name": "monitoring_status"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433,
+          "default": "active"
+        },
+        {
+          "id": "99",
+          "name": "last_checked_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "100",
+          "name": "next_check_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "101",
+          "name": "total_updates",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433,
+          "default": "0"
+        },
+        {
+          "id": "102",
+          "name": "unread_updates",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433,
+          "default": "0"
+        },
+        {
+          "id": "103",
+          "name": "created_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433,
+          "default": "now()"
+        },
+        {
+          "id": "104",
+          "name": "updated_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433,
+          "default": "now()"
+        },
+        {
+          "id": "105",
+          "name": "deleted_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109433,
+          "comments": "Soft delete"
+        }
+      ],
+      "indexes": [
+        {
+          "id": "106",
+          "name": "",
+          "unique": true,
+          "fieldIds": [
+            "91"
+          ],
+          "createdAt": 1777459109433,
+          "isPrimaryKey": true
+        },
+        {
+          "id": "107",
+          "name": "monitored_case_tenant_idx",
+          "unique": false,
+          "fieldIds": [
+            "92"
+          ],
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "108",
+          "name": "monitored_case_legal_entity_idx",
+          "unique": false,
+          "fieldIds": [
+            "93"
+          ],
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "109",
+          "name": "monitored_case_status_idx",
+          "unique": false,
+          "fieldIds": [
+            "98"
+          ],
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "110",
+          "name": "monitored_case_next_check_idx",
+          "unique": false,
+          "fieldIds": [
+            "100"
+          ],
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "111",
+          "name": "monitored_case_case_idx",
+          "unique": false,
+          "fieldIds": [
+            "95"
+          ],
+          "createdAt": 1777467931776
+        }
+      ],
+      "color": "#8eb7ff",
+      "isView": false,
+      "createdAt": 1777459109433,
+      "order": 11,
+      "parentAreaId": "357",
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "112",
+      "name": "legal_entity",
+      "schema": "public",
+      "x": 281.9854617002242,
+      "y": -703.4515392373196,
+      "fields": [
+        {
+          "id": "113",
+          "name": "id",
+          "type": {
+            "id": "serial",
+            "name": "serial"
+          },
+          "primaryKey": true,
+          "unique": false,
+          "nullable": false,
+          "increment": true,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "114",
+          "name": "tenant_id",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "115",
+          "name": "type",
+          "type": {
+            "id": "entity_type",
+            "name": "entity_type"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "116",
+          "name": "name",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109432,
+          "comments": "Full name (individual) or company name"
+        },
+        {
+          "id": "117",
+          "name": "surname",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432,
+          "comments": "Only for individuals"
+        },
+        {
+          "id": "118",
+          "name": "fiscal_code",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432,
+          "comments": "Codice fiscale"
+        },
+        {
+          "id": "119",
+          "name": "vat_number",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432,
+          "comments": "Partita IVA legal entities only"
+        },
+        {
+          "id": "120",
+          "name": "email",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "121",
+          "name": "phone",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "122",
+          "name": "address",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "123",
+          "name": "city",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "124",
+          "name": "province",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "125",
+          "name": "postal_code",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "126",
+          "name": "country",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432,
+          "default": "IT"
+        },
+        {
+          "id": "127",
+          "name": "notes",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432,
+          "comments": "Additional context for AI"
+        },
+        {
+          "id": "128",
+          "name": "created_by",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "129",
+          "name": "created_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109432,
+          "default": "now()"
+        },
+        {
+          "id": "130",
+          "name": "updated_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109432,
+          "default": "now()"
+        },
+        {
+          "id": "131",
+          "name": "deleted_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432,
+          "comments": "Soft delete"
+        }
+      ],
+      "indexes": [
+        {
+          "id": "132",
+          "name": "",
+          "unique": true,
+          "fieldIds": [
+            "113"
+          ],
+          "createdAt": 1777459109432,
+          "isPrimaryKey": true
+        },
+        {
+          "id": "133",
+          "name": "legal_entity_tenant_idx",
+          "unique": false,
+          "fieldIds": [
+            "114"
+          ],
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "134",
+          "name": "legal_entity_type_idx",
+          "unique": false,
+          "fieldIds": [
+            "115"
+          ],
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "135",
+          "name": "legal_entity_fiscal_code_idx",
+          "unique": false,
+          "fieldIds": [
+            "118"
+          ],
+          "createdAt": 1777459109432
+        }
+      ],
+      "color": "#8eb7ff",
+      "isView": false,
+      "createdAt": 1777459109432,
+      "order": 6,
+      "expanded": true,
+      "parentAreaId": "360",
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "136",
+      "name": "user_session",
+      "schema": "public",
+      "x": 220.98695307986497,
+      "y": 0.4477658838632692,
+      "fields": [
+        {
+          "id": "137",
+          "name": "id",
+          "type": {
+            "id": "uuid",
+            "name": "uuid"
+          },
+          "primaryKey": true,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109432,
+          "comments": "Session token / JWT jti"
+        },
+        {
+          "id": "138",
+          "name": "user_id",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "139",
+          "name": "ip_address",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "140",
+          "name": "expires_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "141",
+          "name": "revoked_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "142",
+          "name": "created_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109432,
+          "default": "now()"
+        }
+      ],
+      "indexes": [
+        {
+          "id": "143",
+          "name": "",
+          "unique": true,
+          "fieldIds": [
+            "137"
+          ],
+          "createdAt": 1777459109432,
+          "isPrimaryKey": true
+        },
+        {
+          "id": "144",
+          "name": "user_session_user_idx",
+          "unique": false,
+          "fieldIds": [
+            "138"
+          ],
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "145",
+          "name": "user_session_expires_idx",
+          "unique": false,
+          "fieldIds": [
+            "140"
+          ],
+          "createdAt": 1777459109432
+        }
+      ],
+      "color": "#8eb7ff",
+      "isView": false,
+      "createdAt": 1777459109432,
+      "order": 5,
+      "parentAreaId": "360",
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "146",
+      "name": "estimate_history",
+      "schema": "public",
+      "x": 2480.817875311451,
+      "y": -973.2580876847549,
+      "fields": [
+        {
+          "id": "147",
+          "name": "id",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": true,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "148",
+          "name": "estimate_id",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "149",
+          "name": "score",
+          "type": {
+            "id": "float",
+            "name": "float"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "150",
+          "name": "previous_score",
+          "type": {
+            "id": "float",
+            "name": "float"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109433,
+          "comments": "Score before this recalculation"
+        },
+        {
+          "id": "151",
+          "name": "category",
+          "type": {
+            "id": "probability_category",
+            "name": "probability_category"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "152",
+          "name": "previous_category",
+          "type": {
+            "id": "probability_category",
+            "name": "probability_category"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "153",
+          "name": "analysis",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "154",
+          "name": "sources",
+          "type": {
+            "id": "jsonb",
+            "name": "jsonb"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "155",
+          "name": "score_delta",
+          "type": {
+            "id": "float",
+            "name": "float"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109433,
+          "comments": "Absolute change from previous: score - previous_score"
+        },
+        {
+          "id": "156",
+          "name": "is_significant_change",
+          "type": {
+            "id": "boolean",
+            "name": "boolean"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433,
+          "default": "false",
+          "comments": "True if change triggered notification"
+        },
+        {
+          "id": "157",
+          "name": "calculated_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433,
+          "default": "now()"
+        },
+        {
+          "id": "158",
+          "name": "created_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433,
+          "default": "now()"
+        }
+      ],
+      "indexes": [
+        {
+          "id": "159",
+          "name": "",
+          "unique": true,
+          "fieldIds": [
+            "147"
+          ],
+          "createdAt": 1777459109433,
+          "isPrimaryKey": true
+        },
+        {
+          "id": "160",
+          "name": "estimate_history_estimate_idx",
+          "unique": false,
+          "fieldIds": [
+            "148"
+          ],
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "161",
+          "name": "estimate_history_calculated_idx",
+          "unique": false,
+          "fieldIds": [
+            "157"
+          ],
+          "createdAt": 1777459109433
+        }
+      ],
+      "color": "#8eb7ff",
+      "isView": false,
+      "createdAt": 1777459109433,
+      "order": 14,
+      "parentAreaId": "357",
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "162",
+      "name": "notification_event",
+      "schema": "public",
+      "x": -1502.5037942334375,
+      "y": -1074.138435158544,
+      "fields": [
+        {
+          "id": "163",
+          "name": "id",
+          "type": {
+            "id": "serial",
+            "name": "serial"
+          },
+          "primaryKey": true,
+          "unique": false,
+          "nullable": false,
+          "increment": true,
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "164",
+          "name": "template_id",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "165",
+          "name": "recipient_user_id",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "166",
+          "name": "channel",
+          "type": {
+            "id": "notification_channel",
+            "name": "notification_channel"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433,
+          "default": "email"
+        },
+        {
+          "id": "167",
+          "name": "subject",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "168",
+          "name": "body",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "169",
+          "name": "context",
+          "type": {
+            "id": "jsonb",
+            "name": "jsonb"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109433,
+          "comments": "Template rendering context data"
+        },
+        {
+          "id": "170",
+          "name": "status",
+          "type": {
+            "id": "notification_status",
+            "name": "notification_status"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433,
+          "default": "pending"
+        },
+        {
+          "id": "171",
+          "name": "sent_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "172",
+          "name": "error_message",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "173",
+          "name": "retry_count",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433,
+          "default": "0"
+        },
+        {
+          "id": "174",
+          "name": "created_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433,
+          "default": "now()"
+        }
+      ],
+      "indexes": [
+        {
+          "id": "175",
+          "name": "",
+          "unique": true,
+          "fieldIds": [
+            "163"
+          ],
+          "createdAt": 1777459109433,
+          "isPrimaryKey": true
+        },
+        {
+          "id": "176",
+          "name": "notification_event_template_idx",
+          "unique": false,
+          "fieldIds": [
+            "164"
+          ],
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "177",
+          "name": "notification_event_recipient_idx",
+          "unique": false,
+          "fieldIds": [
+            "165"
+          ],
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "178",
+          "name": "notification_event_status_idx",
+          "unique": false,
+          "fieldIds": [
+            "170"
+          ],
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "179",
+          "name": "notification_event_created_idx",
+          "unique": false,
+          "fieldIds": [
+            "174"
+          ],
+          "createdAt": 1777459109433
+        }
+      ],
+      "color": "#8eb7ff",
+      "isView": false,
+      "createdAt": 1777459109433,
+      "order": 16,
+      "parentAreaId": "359",
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "180",
+      "name": "monitoring_update",
+      "schema": "public",
+      "x": 2839.129787898959,
+      "y": -1419.5190113714348,
+      "fields": [
+        {
+          "id": "181",
+          "name": "id",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": true,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "182",
+          "name": "monitored_case_id",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "183",
+          "name": "summary",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109433,
+          "comments": "AI-generated summary of the update run"
+        },
+        {
+          "id": "184",
+          "name": "content",
+          "type": {
+            "id": "jsonb",
+            "name": "jsonb"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109433,
+          "comments": "Structured updates: [{title, source, reference, relevance, url}]"
+        },
+        {
+          "id": "185",
+          "name": "is_read",
+          "type": {
+            "id": "boolean",
+            "name": "boolean"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433,
+          "default": "false"
+        },
+        {
+          "id": "186",
+          "name": "read_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "187",
+          "name": "checked_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433,
+          "default": "now()"
+        },
+        {
+          "id": "188",
+          "name": "processing_time_ms",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "189",
+          "name": "created_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433,
+          "default": "now()"
+        }
+      ],
+      "indexes": [
+        {
+          "id": "190",
+          "name": "",
+          "unique": true,
+          "fieldIds": [
+            "181"
+          ],
+          "createdAt": 1777459109433,
+          "isPrimaryKey": true
+        },
+        {
+          "id": "191",
+          "name": "monitoring_update_case_idx",
+          "unique": false,
+          "fieldIds": [
+            "182"
+          ],
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "192",
+          "name": "monitoring_update_checked_idx",
+          "unique": false,
+          "fieldIds": [
+            "187"
+          ],
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "193",
+          "name": "monitoring_update_unread_idx",
+          "unique": false,
+          "fieldIds": [
+            "182",
+            "185"
+          ],
+          "createdAt": 1777459109433
+        }
+      ],
+      "color": "#8eb7ff",
+      "isView": false,
+      "createdAt": 1777459109433,
+      "order": 12,
+      "parentAreaId": "357",
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "194",
+      "name": "user",
+      "schema": "public",
+      "x": -170.71226513686395,
+      "y": -452.27938238310156,
+      "fields": [
+        {
+          "id": "195",
+          "name": "id",
+          "type": {
+            "id": "serial",
+            "name": "serial"
+          },
+          "primaryKey": true,
+          "unique": false,
+          "nullable": false,
+          "increment": true,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "196",
+          "name": "tenant_id",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "197",
+          "name": "email",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "198",
+          "name": "password_hash",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432,
+          "comments": "Nullable for SSO-only users"
+        },
+        {
+          "id": "199",
+          "name": "name",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "200",
+          "name": "surname",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "201",
+          "name": "role",
+          "type": {
+            "id": "user_role",
+            "name": "user_role"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109432,
+          "default": "user"
+        },
+        {
+          "id": "202",
+          "name": "status",
+          "type": {
+            "id": "user_status",
+            "name": "user_status"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109432,
+          "default": "pending"
+        },
+        {
+          "id": "203",
+          "name": "auth_provider",
+          "type": {
+            "id": "auth_provider",
+            "name": "auth_provider"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109432,
+          "default": "local"
+        },
+        {
+          "id": "204",
+          "name": "auth_provider_id",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432,
+          "comments": "External provider user ID (Google sub, etc.)"
+        },
+        {
+          "id": "205",
+          "name": "professional_role",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432,
+          "comments": "Attorney, Accountant, Tax Consultant..."
+        },
+        {
+          "id": "206",
+          "name": "about",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432,
+          "comments": "Free-text expertise description fed into AI context"
+        },
+        {
+          "id": "207",
+          "name": "profile_completion_pct",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109432,
+          "default": "0",
+          "comments": "0-100 profile completion"
+        },
+        {
+          "id": "208",
+          "name": "email_verified",
+          "type": {
+            "id": "boolean",
+            "name": "boolean"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109432,
+          "default": "false"
+        },
+        {
+          "id": "209",
+          "name": "email_verification_code",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "210",
+          "name": "email_verification_expires_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "211",
+          "name": "password_reset_code",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "212",
+          "name": "password_reset_expires_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "213",
+          "name": "last_login_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "214",
+          "name": "is_first_login",
+          "type": {
+            "id": "boolean",
+            "name": "boolean"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109432,
+          "default": "true"
+        },
+        {
+          "id": "215",
+          "name": "created_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109432,
+          "default": "now()"
+        },
+        {
+          "id": "216",
+          "name": "updated_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109432,
+          "default": "now()"
+        },
+        {
+          "id": "217",
+          "name": "deleted_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432,
+          "comments": "Soft delete"
+        }
+      ],
+      "indexes": [
+        {
+          "id": "218",
+          "name": "",
+          "unique": true,
+          "fieldIds": [
+            "195"
+          ],
+          "createdAt": 1777459109432,
+          "isPrimaryKey": true
+        },
+        {
+          "id": "219",
+          "name": "user_tenant_email_uq",
+          "unique": true,
+          "fieldIds": [
+            "196",
+            "197"
+          ],
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "220",
+          "name": "user_tenant_idx",
+          "unique": false,
+          "fieldIds": [
+            "196"
+          ],
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "221",
+          "name": "user_email_idx",
+          "unique": false,
+          "fieldIds": [
+            "197"
+          ],
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "222",
+          "name": "user_status_idx",
+          "unique": false,
+          "fieldIds": [
+            "202"
+          ],
+          "createdAt": 1777459109432
+        }
+      ],
+      "color": "#8eb7ff",
+      "isView": false,
+      "createdAt": 1777459109432,
+      "order": 4,
+      "expanded": true,
+      "parentAreaId": "360",
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "223",
+      "name": "document",
+      "schema": "public",
+      "x": 2039.98543437746,
+      "y": -1494.4071027422292,
+      "fields": [
+        {
+          "id": "224",
+          "name": "id",
+          "type": {
+            "id": "serial",
+            "name": "serial"
+          },
+          "primaryKey": true,
+          "unique": false,
+          "nullable": false,
+          "increment": true,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "225",
+          "name": "tenant_id",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "226",
+          "name": "uploaded_by",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "227",
+          "name": "legal_entity_id",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432,
+          "comments": "Optional: document linked to a client"
+        },
+        {
+          "id": "228",
+          "name": "case_id",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432,
+          "comments": "Optional: document linked to a case"
+        },
+        {
+          "id": "229",
+          "name": "title",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "230",
+          "name": "file_name",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "231",
+          "name": "mime_type",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "232",
+          "name": "file_size_bytes",
+          "type": {
+            "id": "bigint",
+            "name": "bigint"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "233",
+          "name": "storage_key",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109432,
+          "comments": "S3 object key or storage path"
+        },
+        {
+          "id": "234",
+          "name": "embedding_status",
+          "type": {
+            "id": "document_status",
+            "name": "document_status"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109432,
+          "default": "uploaded"
+        },
+        {
+          "id": "235",
+          "name": "embedding_id",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432,
+          "comments": "Vector store reference ID after indexing"
+        },
+        {
+          "id": "236",
+          "name": "embedding_error",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432,
+          "comments": "Error message if indexing failed"
+        },
+        {
+          "id": "237",
+          "name": "indexed_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432,
+          "comments": "When embedding completed"
+        },
+        {
+          "id": "238",
+          "name": "metadata",
+          "type": {
+            "id": "jsonb",
+            "name": "jsonb"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432,
+          "comments": "Extensible metadata (page count, language, tag, etc.)"
+        },
+        {
+          "id": "239",
+          "name": "created_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109432,
+          "default": "now()"
+        },
+        {
+          "id": "240",
+          "name": "updated_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109432,
+          "default": "now()"
+        },
+        {
+          "id": "241",
+          "name": "deleted_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432,
+          "comments": "Soft delete"
+        }
+      ],
+      "indexes": [
+        {
+          "id": "242",
+          "name": "",
+          "unique": true,
+          "fieldIds": [
+            "224"
+          ],
+          "createdAt": 1777459109432,
+          "isPrimaryKey": true
+        },
+        {
+          "id": "243",
+          "name": "document_tenant_idx",
+          "unique": false,
+          "fieldIds": [
+            "225"
+          ],
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "244",
+          "name": "document_uploaded_by_idx",
+          "unique": false,
+          "fieldIds": [
+            "226"
+          ],
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "245",
+          "name": "document_legal_entity_idx",
+          "unique": false,
+          "fieldIds": [
+            "227"
+          ],
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "246",
+          "name": "document_case_idx",
+          "unique": false,
+          "fieldIds": [
+            "228"
+          ],
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "247",
+          "name": "document_embedding_status_idx",
+          "unique": false,
+          "fieldIds": [
+            "234"
+          ],
+          "createdAt": 1777459109432
+        }
+      ],
+      "color": "#8eb7ff",
+      "isView": false,
+      "createdAt": 1777459109432,
+      "order": 8,
+      "parentAreaId": "357",
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "248",
+      "name": "subscription_plan",
+      "schema": "public",
+      "x": -947.8174208613574,
+      "y": -1697.8056705752515,
+      "fields": [
+        {
+          "id": "249",
+          "name": "id",
+          "type": {
+            "id": "serial",
+            "name": "serial"
+          },
+          "primaryKey": true,
+          "unique": false,
+          "nullable": false,
+          "increment": true,
+          "createdAt": 1777459109431
+        },
+        {
+          "id": "250",
+          "name": "name",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109431,
+          "comments": "Display name (e.g. Basic, Advanced)"
+        },
+        {
+          "id": "251",
+          "name": "type",
+          "type": {
+            "id": "subscription_type",
+            "name": "subscription_type"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109431
+        },
+        {
+          "id": "252",
+          "name": "billing_cycle",
+          "type": {
+            "id": "billing_cycle",
+            "name": "billing_cycle"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109431
+        },
+        {
+          "id": "253",
+          "name": "price_cents",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109431,
+          "comments": "Monthly/annual price in euro cents"
+        },
+        {
+          "id": "254",
+          "name": "max_users",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109431,
+          "default": "1",
+          "comments": "Max users per tenant"
+        },
+        {
+          "id": "255",
+          "name": "max_monitored_cases",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109432,
+          "default": "3",
+          "comments": "Max active monitored cases"
+        },
+        {
+          "id": "256",
+          "name": "max_estimates_per_month",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109432,
+          "default": "10"
+        },
+        {
+          "id": "257",
+          "name": "max_document_size_mb",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109432,
+          "default": "50"
+        },
+        {
+          "id": "258",
+          "name": "features",
+          "type": {
+            "id": "jsonb",
+            "name": "jsonb"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432,
+          "comments": "Feature flags for plan-specific capabilities"
+        },
+        {
+          "id": "259",
+          "name": "stripe_price_id",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432,
+          "comments": "Stripe Price object ID"
+        },
+        {
+          "id": "260",
+          "name": "is_active",
+          "type": {
+            "id": "boolean",
+            "name": "boolean"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109432,
+          "default": "true"
+        },
+        {
+          "id": "261",
+          "name": "created_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109432,
+          "default": "now()"
+        },
+        {
+          "id": "262",
+          "name": "updated_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109432,
+          "default": "now()"
+        }
+      ],
+      "indexes": [
+        {
+          "id": "263",
+          "name": "",
+          "unique": true,
+          "fieldIds": [
+            "249"
+          ],
+          "createdAt": 1777459109432,
+          "isPrimaryKey": true
+        },
+        {
+          "id": "264",
+          "name": "subscription_plan_stripe_price_uq",
+          "unique": true,
+          "fieldIds": [
+            "259"
+          ],
+          "createdAt": 1777459109432
+        }
+      ],
+      "color": "#8eb7ff",
+      "isView": false,
+      "createdAt": 1777459109432,
+      "order": 2,
+      "parentAreaId": "358",
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "265",
+      "name": "tenant_case_counter",
+      "schema": "public",
+      "x": -510.78060006743885,
+      "y": 179.82130635840642,
+      "fields": [
+        {
+          "id": "266",
+          "name": "tenant_id",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": true,
+          "unique": true,
+          "nullable": false,
+          "createdAt": 1777467931776,
+          "comments": "FK + PK to tenant.id"
+        },
+        {
+          "id": "267",
+          "name": "last_number",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777467931776,
+          "default": "0",
+          "comments": "Last allocated case number for the tenant"
+        },
+        {
+          "id": "268",
+          "name": "updated_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777467931776,
+          "default": "now()"
+        }
+      ],
+      "indexes": [
+        {
+          "id": "269",
+          "name": "",
+          "unique": true,
+          "fieldIds": [
+            "266"
+          ],
+          "createdAt": 1777467931776,
+          "isPrimaryKey": true
+        }
+      ],
+      "color": "#9ca3af",
+      "isView": false,
+      "createdAt": 1777467931776,
+      "order": 19,
+      "expanded": true,
+      "parentAreaId": "360",
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "270",
+      "name": "scheduled_job",
+      "schema": "public",
+      "x": 2530.7659445243967,
+      "y": -1434.8094229308106,
+      "fields": [
+        {
+          "id": "271",
+          "name": "id",
+          "type": {
+            "id": "serial",
+            "name": "serial"
+          },
+          "primaryKey": true,
+          "unique": false,
+          "nullable": false,
+          "increment": true,
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "272",
+          "name": "job_type",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109434,
+          "comments": "monitoring_update, estimate_recalculation, source_ingestion"
+        },
+        {
+          "id": "273",
+          "name": "reference_id",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109434,
+          "comments": "ID of the entity being processed (monitored_case.id)"
+        },
+        {
+          "id": "274",
+          "name": "status",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109434,
+          "default": "pending",
+          "comments": "pending, running, completed, failed"
+        },
+        {
+          "id": "275",
+          "name": "started_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109434
+        },
+        {
+          "id": "276",
+          "name": "completed_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109434
+        },
+        {
+          "id": "277",
+          "name": "error_message",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109434
+        },
+        {
+          "id": "278",
+          "name": "retry_count",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109434,
+          "default": "0"
+        },
+        {
+          "id": "279",
+          "name": "next_retry_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109434
+        },
+        {
+          "id": "280",
+          "name": "created_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109434,
+          "default": "now()"
+        }
+      ],
+      "indexes": [
+        {
+          "id": "281",
+          "name": "",
+          "unique": true,
+          "fieldIds": [
+            "271"
+          ],
+          "createdAt": 1777459109434,
+          "isPrimaryKey": true
+        },
+        {
+          "id": "282",
+          "name": "scheduled_job_type_ref_idx",
+          "unique": false,
+          "fieldIds": [
+            "272",
+            "273"
+          ],
+          "createdAt": 1777459109434
+        },
+        {
+          "id": "283",
+          "name": "scheduled_job_status_idx",
+          "unique": false,
+          "fieldIds": [
+            "274"
+          ],
+          "createdAt": 1777459109434
+        },
+        {
+          "id": "284",
+          "name": "scheduled_job_retry_idx",
+          "unique": false,
+          "fieldIds": [
+            "279"
+          ],
+          "createdAt": 1777459109434
+        }
+      ],
+      "color": "#8eb7ff",
+      "isView": false,
+      "createdAt": 1777459109434,
+      "comments": "Tracks execution of async jobs: monitoring runs, estimate recalculations, etc.",
+      "order": 18,
+      "parentAreaId": "357",
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "285",
+      "name": "chat_message",
+      "schema": "public",
+      "x": 1647.344775802678,
+      "y": -1453.7626217736245,
+      "fields": [
+        {
+          "id": "286",
+          "name": "id",
+          "type": {
+            "id": "serial",
+            "name": "serial"
+          },
+          "primaryKey": true,
+          "unique": false,
+          "nullable": false,
+          "increment": true,
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "287",
+          "name": "session_id",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "288",
+          "name": "role",
+          "type": {
+            "id": "message_role",
+            "name": "message_role"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "289",
+          "name": "content",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "290",
+          "name": "sources",
+          "type": {
+            "id": "jsonb",
+            "name": "jsonb"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109433,
+          "comments": "Array of cited legal sources: [{title, reference, url}]"
+        },
+        {
+          "id": "291",
+          "name": "token_count",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109433,
+          "comments": "Token usage for billing/monitoring"
+        },
+        {
+          "id": "292",
+          "name": "processing_time_ms",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109433,
+          "comments": "RAG pipeline latency in ms"
+        },
+        {
+          "id": "293",
+          "name": "attachments",
+          "type": {
+            "id": "jsonb",
+            "name": "jsonb"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109433,
+          "comments": "Inline attachments: [{document_id, file_name}]"
+        },
+        {
+          "id": "294",
+          "name": "created_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109433,
+          "default": "now()"
+        }
+      ],
+      "indexes": [
+        {
+          "id": "295",
+          "name": "",
+          "unique": true,
+          "fieldIds": [
+            "286"
+          ],
+          "createdAt": 1777459109433,
+          "isPrimaryKey": true
+        },
+        {
+          "id": "296",
+          "name": "chat_message_session_idx",
+          "unique": false,
+          "fieldIds": [
+            "287"
+          ],
+          "createdAt": 1777459109433
+        },
+        {
+          "id": "297",
+          "name": "chat_message_created_idx",
+          "unique": false,
+          "fieldIds": [
+            "294"
+          ],
+          "createdAt": 1777459109433
+        }
+      ],
+      "color": "#8eb7ff",
+      "isView": false,
+      "createdAt": 1777459109433,
+      "order": 10,
+      "parentAreaId": "357",
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "298",
+      "name": "permission",
+      "schema": "public",
+      "x": -436.50925555325557,
+      "y": 840.1098844863325,
+      "fields": [
+        {
+          "id": "299",
+          "name": "id",
+          "type": {
+            "id": "serial",
+            "name": "serial"
+          },
+          "primaryKey": true,
+          "unique": false,
+          "nullable": false,
+          "increment": true,
+          "createdAt": 1777459109431
+        },
+        {
+          "id": "300",
+          "name": "role_value",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109431
+        },
+        {
+          "id": "301",
+          "name": "resource",
+          "type": {
+            "id": "permission_resource",
+            "name": "permission_resource"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109431
+        },
+        {
+          "id": "302",
+          "name": "action",
+          "type": {
+            "id": "permission_action",
+            "name": "permission_action"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109431
+        },
+        {
+          "id": "303",
+          "name": "created_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109431,
+          "default": "now()"
+        },
+        {
+          "id": "304",
+          "name": "updated_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109431,
+          "default": "now()"
+        }
+      ],
+      "indexes": [
+        {
+          "id": "305",
+          "name": "",
+          "unique": true,
+          "fieldIds": [
+            "299"
+          ],
+          "createdAt": 1777459109431,
+          "isPrimaryKey": true
+        },
+        {
+          "id": "306",
+          "name": "permission_role_resource_action_uq",
+          "unique": true,
+          "fieldIds": [
+            "300",
+            "301",
+            "302"
+          ],
+          "createdAt": 1777459109431
+        }
+      ],
+      "color": "#8eb7ff",
+      "isView": false,
+      "createdAt": 1777459109431,
+      "order": 1,
+      "parentAreaId": "361",
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "307",
+      "name": "role",
+      "schema": "public",
+      "x": -36.24671249751185,
+      "y": 873.8758993769751,
+      "fields": [
+        {
+          "id": "308",
+          "name": "value",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": true,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109431,
+          "comments": "Role identifier (admin, lawyer, etc.)"
+        },
+        {
+          "id": "309",
+          "name": "description",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109431
+        },
+        {
+          "id": "310",
+          "name": "is_system",
+          "type": {
+            "id": "boolean",
+            "name": "boolean"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109431,
+          "default": "true",
+          "comments": "System roles cannot be deleted"
+        },
+        {
+          "id": "311",
+          "name": "created_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109431,
+          "default": "now()"
+        },
+        {
+          "id": "312",
+          "name": "updated_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109431,
+          "default": "now()"
+        }
+      ],
+      "indexes": [
+        {
+          "id": "313",
+          "name": "",
+          "unique": true,
+          "fieldIds": [
+            "308"
+          ],
+          "createdAt": 1777459109431,
+          "isPrimaryKey": true
+        }
+      ],
+      "color": "#8eb7ff",
+      "isView": false,
+      "createdAt": 1777459109431,
+      "order": 0,
+      "parentAreaId": "361",
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "314",
+      "name": "case",
+      "schema": "public",
+      "x": 779.7077164536415,
+      "y": -784.1276944521359,
+      "fields": [
+        {
+          "id": "315",
+          "name": "id",
+          "type": {
+            "id": "serial",
+            "name": "serial"
+          },
+          "primaryKey": true,
+          "unique": false,
+          "nullable": false,
+          "increment": true,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "316",
+          "name": "tenant_id",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "317",
+          "name": "legal_entity_id",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "318",
+          "name": "created_by",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "319",
+          "name": "case_number",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109432,
+          "comments": "Sequential per-tenant (#001, #002...)"
+        },
+        {
+          "id": "320",
+          "name": "title",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "321",
+          "name": "description",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "322",
+          "name": "assigned_lawyer",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "323",
+          "name": "case_type",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "324",
+          "name": "status",
+          "type": {
+            "id": "case_status",
+            "name": "case_status"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109432,
+          "default": "open"
+        },
+        {
+          "id": "325",
+          "name": "closed_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "326",
+          "name": "created_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109432,
+          "default": "now()"
+        },
+        {
+          "id": "327",
+          "name": "updated_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": false,
+          "createdAt": 1777459109432,
+          "default": "now()"
+        },
+        {
+          "id": "328",
+          "name": "deleted_at",
+          "type": {
+            "id": "timestamp",
+            "name": "timestamp"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1777459109432,
+          "comments": "Soft delete"
+        }
+      ],
+      "indexes": [
+        {
+          "id": "329",
+          "name": "",
+          "unique": true,
+          "fieldIds": [
+            "315"
+          ],
+          "createdAt": 1777459109432,
+          "isPrimaryKey": true
+        },
+        {
+          "id": "330",
+          "name": "case_tenant_idx",
+          "unique": false,
+          "fieldIds": [
+            "316"
+          ],
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "331",
+          "name": "case_legal_entity_idx",
+          "unique": false,
+          "fieldIds": [
+            "317"
+          ],
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "332",
+          "name": "case_tenant_number_uq",
+          "unique": true,
+          "fieldIds": [
+            "316",
+            "319"
+          ],
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "333",
+          "name": "case_status_idx",
+          "unique": false,
+          "fieldIds": [
+            "324"
+          ],
+          "createdAt": 1777459109432
+        },
+        {
+          "id": "334",
+          "name": "case_assigned_lawyer_idx",
+          "unique": false,
+          "fieldIds": [
+            "322"
+          ],
+          "createdAt": 1777467931776
+        }
+      ],
+      "color": "#8eb7ff",
+      "isView": false,
+      "createdAt": 1777459109432,
+      "order": 7,
+      "expanded": true,
+      "parentAreaId": "360",
+      "diagramId": "qh8xfu1opjvg"
+    }
+  ],
+  "relationships": [
+    {
+      "id": "335",
+      "name": "case_assigned_lawyer_user_id",
+      "sourceSchema": "public",
+      "sourceTableId": "314",
+      "targetSchema": "public",
+      "targetTableId": "194",
+      "sourceFieldId": "322",
+      "targetFieldId": "195",
+      "sourceCardinality": "many",
+      "targetCardinality": "one",
+      "createdAt": 1777467931776,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "336",
+      "name": "case_created_by_user_id",
+      "sourceSchema": "public",
+      "sourceTableId": "314",
+      "targetSchema": "public",
+      "targetTableId": "194",
+      "sourceFieldId": "318",
+      "targetFieldId": "195",
+      "sourceCardinality": "many",
+      "targetCardinality": "one",
+      "createdAt": 1777459109434,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "337",
+      "name": "case_legal_entity_id_legal_entity_id",
+      "sourceSchema": "public",
+      "sourceTableId": "314",
+      "targetSchema": "public",
+      "targetTableId": "112",
+      "sourceFieldId": "317",
+      "targetFieldId": "113",
+      "sourceCardinality": "many",
+      "targetCardinality": "one",
+      "createdAt": 1777459109434,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "338",
+      "name": "case_tenant_id_tenant_id",
+      "sourceSchema": "public",
+      "sourceTableId": "314",
+      "targetSchema": "public",
+      "targetTableId": "34",
+      "sourceFieldId": "316",
+      "targetFieldId": "35",
+      "sourceCardinality": "many",
+      "targetCardinality": "one",
+      "createdAt": 1777459109434,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "339",
+      "name": "chat_message_session_id_chat_session_id",
+      "sourceSchema": "public",
+      "sourceTableId": "285",
+      "targetSchema": "public",
+      "targetTableId": "73",
+      "sourceFieldId": "287",
+      "targetFieldId": "74",
+      "sourceCardinality": "many",
+      "targetCardinality": "one",
+      "createdAt": 1777459109434,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "340",
+      "name": "chat_session_case_id_case_id",
+      "sourceSchema": "public",
+      "sourceTableId": "73",
+      "targetSchema": "public",
+      "targetTableId": "314",
+      "sourceFieldId": "77",
+      "targetFieldId": "315",
+      "sourceCardinality": "many",
+      "targetCardinality": "one",
+      "createdAt": 1777459109434,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "341",
+      "name": "chat_session_legal_entity_id_legal_entity_id",
+      "sourceSchema": "public",
+      "sourceTableId": "73",
+      "targetSchema": "public",
+      "targetTableId": "112",
+      "sourceFieldId": "78",
+      "targetFieldId": "113",
+      "sourceCardinality": "many",
+      "targetCardinality": "one",
+      "createdAt": 1777459109434,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "342",
+      "name": "chat_session_tenant_id_tenant_id",
+      "sourceSchema": "public",
+      "sourceTableId": "73",
+      "targetSchema": "public",
+      "targetTableId": "34",
+      "sourceFieldId": "75",
+      "targetFieldId": "35",
+      "sourceCardinality": "many",
+      "targetCardinality": "one",
+      "createdAt": 1777459109434,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "343",
+      "name": "chat_session_user_id_user_id",
+      "sourceSchema": "public",
+      "sourceTableId": "73",
+      "targetSchema": "public",
+      "targetTableId": "194",
+      "sourceFieldId": "76",
+      "targetFieldId": "195",
+      "sourceCardinality": "many",
+      "targetCardinality": "one",
+      "createdAt": 1777459109434,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "344",
+      "name": "document_case_id_case_id",
+      "sourceSchema": "public",
+      "sourceTableId": "223",
+      "targetSchema": "public",
+      "targetTableId": "314",
+      "sourceFieldId": "228",
+      "targetFieldId": "315",
+      "sourceCardinality": "many",
+      "targetCardinality": "one",
+      "createdAt": 1777459109434,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "345",
+      "name": "document_legal_entity_id_legal_entity_id",
+      "sourceSchema": "public",
+      "sourceTableId": "223",
+      "targetSchema": "public",
+      "targetTableId": "112",
+      "sourceFieldId": "227",
+      "targetFieldId": "113",
+      "sourceCardinality": "many",
+      "targetCardinality": "one",
+      "createdAt": 1777459109434,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "346",
+      "name": "document_tenant_id_tenant_id",
+      "sourceSchema": "public",
+      "sourceTableId": "223",
+      "targetSchema": "public",
+      "targetTableId": "34",
+      "sourceFieldId": "225",
+      "targetFieldId": "35",
+      "sourceCardinality": "many",
+      "targetCardinality": "one",
+      "createdAt": 1777459109434,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "347",
+      "name": "document_uploaded_by_user_id",
+      "sourceSchema": "public",
+      "sourceTableId": "223",
+      "targetSchema": "public",
+      "targetTableId": "194",
+      "sourceFieldId": "226",
+      "targetFieldId": "195",
+      "sourceCardinality": "many",
+      "targetCardinality": "one",
+      "createdAt": 1777459109434,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "348",
+      "name": "estimate_history_estimate_id_probabilistic_estimate_id",
+      "sourceSchema": "public",
+      "sourceTableId": "146",
+      "targetSchema": "public",
+      "targetTableId": "11",
+      "sourceFieldId": "148",
+      "targetFieldId": "12",
+      "sourceCardinality": "many",
+      "targetCardinality": "one",
+      "createdAt": 1777459109434,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "349",
+      "name": "legal_entity_created_by_user_id",
+      "sourceSchema": "public",
+      "sourceTableId": "112",
+      "targetSchema": "public",
+      "targetTableId": "194",
+      "sourceFieldId": "128",
+      "targetFieldId": "195",
+      "sourceCardinality": "many",
+      "targetCardinality": "one",
+      "createdAt": 1777459109434,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "350",
+      "name": "legal_entity_tenant_id_tenant_id",
+      "sourceSchema": "public",
+      "sourceTableId": "112",
+      "targetSchema": "public",
+      "targetTableId": "34",
+      "sourceFieldId": "114",
+      "targetFieldId": "35",
+      "sourceCardinality": "many",
+      "targetCardinality": "one",
+      "createdAt": 1777459109434,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "351",
+      "name": "monitored_case_case_id",
+      "sourceSchema": "public",
+      "sourceTableId": "90",
+      "targetSchema": "public",
+      "targetTableId": "314",
+      "sourceFieldId": "95",
+      "targetFieldId": "315",
+      "sourceCardinality": "many",
+      "targetCardinality": "one",
+      "createdAt": 1777467931776,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "352",
+      "name": "monitored_case_created_by_user_id",
+      "sourceSchema": "public",
+      "sourceTableId": "90",
+      "targetSchema": "public",
+      "targetTableId": "194",
+      "sourceFieldId": "94",
+      "targetFieldId": "195",
+      "sourceCardinality": "many",
+      "targetCardinality": "one",
+      "createdAt": 1777459109434,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "353",
+      "name": "monitored_case_legal_entity_id_legal_entity_id",
+      "sourceSchema": "public",
+      "sourceTableId": "90",
+      "targetSchema": "public",
+      "targetTableId": "112",
+      "sourceFieldId": "93",
+      "targetFieldId": "113",
+      "sourceCardinality": "many",
+      "targetCardinality": "one",
+      "createdAt": 1777459109434,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "354",
+      "name": "monitored_case_tenant_id_tenant_id",
+      "sourceSchema": "public",
+      "sourceTableId": "90",
+      "targetSchema": "public",
+      "targetTableId": "34",
+      "sourceFieldId": "92",
+      "targetFieldId": "35",
+      "sourceCardinality": "many",
+      "targetCardinality": "one",
+      "createdAt": 1777459109434,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "355",
+      "name": "monitoring_update_monitored_case_id_monitored_case_id",
+      "sourceSchema": "public",
+      "sourceTableId": "180",
+      "targetSchema": "public",
+      "targetTableId": "90",
+      "sourceFieldId": "182",
+      "targetFieldId": "91",
+      "sourceCardinality": "many",
+      "targetCardinality": "one",
+      "createdAt": 1777459109434,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "356",
+      "name": "notification_event_recipient_user_id_user_id",
+      "sourceSchema": "public",
+      "sourceTableId": "162",
+      "targetSchema": "public",
+      "targetTableId": "194",
+      "sourceFieldId": "165",
+      "targetFieldId": "195",
+      "sourceCardinality": "many",
+      "targetCardinality": "one",
+      "createdAt": 1777459109434,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "357",
+      "name": "notification_event_template_id_notification_template_id",
+      "sourceSchema": "public",
+      "sourceTableId": "162",
+      "targetSchema": "public",
+      "targetTableId": "1",
+      "sourceFieldId": "164",
+      "targetFieldId": "2",
+      "sourceCardinality": "many",
+      "targetCardinality": "one",
+      "createdAt": 1777459109434,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "358",
+      "name": "permission_role_value_role_value",
+      "sourceSchema": "public",
+      "sourceTableId": "298",
+      "targetSchema": "public",
+      "targetTableId": "307",
+      "sourceFieldId": "300",
+      "targetFieldId": "308",
+      "sourceCardinality": "many",
+      "targetCardinality": "one",
+      "createdAt": 1777459109434,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "359",
+      "name": "probabilistic_estimate_case_id_case_id",
+      "sourceSchema": "public",
+      "sourceTableId": "11",
+      "targetSchema": "public",
+      "targetTableId": "314",
+      "sourceFieldId": "15",
+      "targetFieldId": "315",
+      "sourceCardinality": "many",
+      "targetCardinality": "one",
+      "createdAt": 1777459109434,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "360",
+      "name": "probabilistic_estimate_created_by_user_id",
+      "sourceSchema": "public",
+      "sourceTableId": "11",
+      "targetSchema": "public",
+      "targetTableId": "194",
+      "sourceFieldId": "16",
+      "targetFieldId": "195",
+      "sourceCardinality": "many",
+      "targetCardinality": "one",
+      "createdAt": 1777459109434,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "361",
+      "name": "probabilistic_estimate_legal_entity_id_legal_entity_id",
+      "sourceSchema": "public",
+      "sourceTableId": "11",
+      "targetSchema": "public",
+      "targetTableId": "112",
+      "sourceFieldId": "14",
+      "targetFieldId": "113",
+      "sourceCardinality": "many",
+      "targetCardinality": "one",
+      "createdAt": 1777459109434,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "362",
+      "name": "probabilistic_estimate_tenant_id_tenant_id",
+      "sourceSchema": "public",
+      "sourceTableId": "11",
+      "targetSchema": "public",
+      "targetTableId": "34",
+      "sourceFieldId": "13",
+      "targetFieldId": "35",
+      "sourceCardinality": "many",
+      "targetCardinality": "one",
+      "createdAt": 1777459109434,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "363",
+      "name": "scheduled_job_reference_id_fk",
+      "sourceSchema": "public",
+      "sourceTableId": "270",
+      "targetSchema": "public",
+      "targetTableId": "90",
+      "sourceFieldId": "273",
+      "targetFieldId": "91",
+      "sourceCardinality": "one",
+      "targetCardinality": "one",
+      "createdAt": 1777467194149,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "364",
+      "name": "tenant_case_counter_tenant_id",
+      "sourceSchema": "public",
+      "sourceTableId": "265",
+      "targetSchema": "public",
+      "targetTableId": "34",
+      "sourceFieldId": "266",
+      "targetFieldId": "35",
+      "sourceCardinality": "many",
+      "targetCardinality": "one",
+      "createdAt": 1777467931776,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "365",
+      "name": "tenant_subscription_plan_id_subscription_plan_id",
+      "sourceSchema": "public",
+      "sourceTableId": "34",
+      "targetSchema": "public",
+      "targetTableId": "248",
+      "sourceFieldId": "47",
+      "targetFieldId": "249",
+      "sourceCardinality": "many",
+      "targetCardinality": "one",
+      "createdAt": 1777459109434,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "366",
+      "name": "user_session_user_id_user_id",
+      "sourceSchema": "public",
+      "sourceTableId": "136",
+      "targetSchema": "public",
+      "targetTableId": "194",
+      "sourceFieldId": "138",
+      "targetFieldId": "195",
+      "sourceCardinality": "many",
+      "targetCardinality": "one",
+      "createdAt": 1777459109434,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "367",
+      "name": "user_tenant_id_tenant_id",
+      "sourceSchema": "public",
+      "sourceTableId": "194",
+      "targetSchema": "public",
+      "targetTableId": "34",
+      "sourceFieldId": "196",
+      "targetFieldId": "35",
+      "sourceCardinality": "many",
+      "targetCardinality": "one",
+      "createdAt": 1777459109434,
+      "diagramId": "qh8xfu1opjvg"
+    }
+  ],
+  "dependencies": [],
+  "areas": [
+    {
+      "id": "368",
+      "name": "RAG service",
+      "x": 1603.8962177129335,
+      "y": -1542.2065778095764,
+      "width": 1519,
+      "height": 1098,
+      "color": "#ffe374",
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "369",
+      "name": "Subscription",
+      "x": -1003.2294672181108,
+      "y": -1780.2452150574168,
+      "width": 1083,
+      "height": 592,
+      "color": "#4dee8a",
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "370",
+      "name": "Notification",
+      "x": -1893.7380260564937,
+      "y": -1122.4032040141742,
+      "width": 1093,
+      "height": 584,
+      "color": "#c05dcf",
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "371",
+      "name": "Master data",
+      "x": -644.0634928111714,
+      "y": -899.0599329171938,
+      "width": 2028,
+      "height": 1406,
+      "color": "#7175fa",
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "372",
+      "name": "Access Control",
+      "x": -602.6577205534097,
+      "y": 738.5550109712023,
+      "width": 950,
+      "height": 491,
+      "color": "#ff6363",
+      "diagramId": "qh8xfu1opjvg"
+    }
+  ],
+  "customTypes": [
+    {
+      "id": "373",
+      "schema": "public",
+      "name": "audit_action",
+      "kind": "enum",
+      "values": [
+        "create",
+        "update",
+        "delete",
+        "login",
+        "logout"
+      ],
+      "order": 0,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "374",
+      "schema": "public",
+      "name": "auth_provider",
+      "kind": "enum",
+      "values": [
+        "local",
+        "google",
+        "microsoft"
+      ],
+      "order": 0,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "375",
+      "schema": "public",
+      "name": "billing_cycle",
+      "kind": "enum",
+      "values": [
+        "monthly",
+        "annual"
+      ],
+      "order": 0,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "376",
+      "schema": "public",
+      "name": "case_status",
+      "kind": "enum",
+      "values": [
+        "open",
+        "closed",
+        "archived"
+      ],
+      "order": 0,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "377",
+      "schema": "public",
+      "name": "document_status",
+      "kind": "enum",
+      "values": [
+        "uploaded",
+        "processing",
+        "indexed",
+        "error"
+      ],
+      "order": 0,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "378",
+      "schema": "public",
+      "name": "entity_type",
+      "kind": "enum",
+      "values": [
+        "individual",
+        "company",
+        "association",
+        "public_body"
+      ],
+      "order": 0,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "379",
+      "schema": "public",
+      "name": "message_role",
+      "kind": "enum",
+      "values": [
+        "user",
+        "ai",
+        "system"
+      ],
+      "order": 0,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "380",
+      "schema": "public",
+      "name": "monitoring_frequency",
+      "kind": "enum",
+      "values": [
+        "daily",
+        "weekly",
+        "monthly"
+      ],
+      "order": 0,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "381",
+      "schema": "public",
+      "name": "monitoring_status",
+      "kind": "enum",
+      "values": [
+        "active",
+        "paused"
+      ],
+      "order": 0,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "382",
+      "schema": "public",
+      "name": "notification_channel",
+      "kind": "enum",
+      "values": [
+        "email",
+        "in_app"
+      ],
+      "order": 0,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "383",
+      "schema": "public",
+      "name": "notification_status",
+      "kind": "enum",
+      "values": [
+        "pending",
+        "sent",
+        "failed"
+      ],
+      "order": 0,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "384",
+      "schema": "public",
+      "name": "permission_action",
+      "kind": "enum",
+      "values": [
+        "list",
+        "create",
+        "read",
+        "update",
+        "delete"
+      ],
+      "order": 0,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "385",
+      "schema": "public",
+      "name": "permission_resource",
+      "kind": "enum",
+      "values": [
+        "tenant",
+        "user",
+        "legal_entity",
+        "case",
+        "document",
+        "chat",
+        "monitored_case",
+        "probabilistic_estimate",
+        "subscription",
+        "settings"
+      ],
+      "order": 0,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "386",
+      "schema": "public",
+      "name": "probability_category",
+      "kind": "enum",
+      "values": [
+        "highly_probable",
+        "probable",
+        "possible",
+        "unlikely"
+      ],
+      "order": 0,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "387",
+      "schema": "public",
+      "name": "subscription_status",
+      "kind": "enum",
+      "values": [
+        "trialing",
+        "active",
+        "past_due",
+        "canceled",
+        "unpaid"
+      ],
+      "order": 0,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "388",
+      "schema": "public",
+      "name": "subscription_type",
+      "kind": "enum",
+      "values": [
+        "basic",
+        "advanced"
+      ],
+      "order": 0,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "389",
+      "schema": "public",
+      "name": "tenant_status",
+      "kind": "enum",
+      "values": [
+        "active",
+        "inactive",
+        "pending",
+        "suspended"
+      ],
+      "order": 0,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "390",
+      "schema": "public",
+      "name": "user_role",
+      "kind": "enum",
+      "values": [
+        "admin_site",
+        "admin_org",
+        "user"
+      ],
+      "order": 0,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "391",
+      "schema": "public",
+      "name": "user_status",
+      "kind": "enum",
+      "values": [
+        "active",
+        "inactive",
+        "pending",
+        "suspended"
+      ],
+      "order": 0,
+      "diagramId": "qh8xfu1opjvg"
+    }
+  ],
+  "notes": []
+}

@@ -49,6 +49,7 @@ export const id_ID: LanguageTranslation = {
                 backup: 'Cadangan',
                 export_diagram: 'Ekspor Diagram',
                 restore_diagram: 'Pulihkan Diagram',
+                versions: 'Versions',
             },
             help: {
                 help: 'Bantuan',
@@ -347,6 +348,8 @@ export const id_ID: LanguageTranslation = {
 
             cancel: 'Batal',
             import_from_file: 'Impor dari file',
+            sync_from_folder: 'Open from linked folder',
+            link_folder: 'Link repository folder…',
             back: 'Kembali',
             empty_diagram: 'Database Kosong',
             continue: 'Lanjutkan',
@@ -482,6 +485,33 @@ export const id_ID: LanguageTranslation = {
                 description:
                     'Sesuatu yang salah. Butuh bantuan? support@chartdb.io',
             },
+        },
+
+        save_mode: {
+            save_now: 'Save',
+            saving: 'Saving…',
+            save_now_tooltip:
+                'Take a snapshot now (and write to folder if linked)',
+            auto: 'Auto-save',
+            manual: 'Manual save',
+            mode_label: 'Save mode',
+            folder_label: 'Repository folder',
+            link_folder: 'Link folder…',
+            change_folder: 'Change folder…',
+            unlink_folder: 'Unlink folder',
+            folder_unsupported:
+                'Requires a Chromium-based browser (Chrome / Edge / Brave)',
+        },
+
+        versions_dialog: {
+            title: 'Diagram Versions',
+            description:
+                'Automatic snapshots of your diagram. The last 3 edits are kept locally in your browser.',
+            empty: 'No versions saved yet. Start editing and a snapshot will appear shortly.',
+            meta: '{{tables}} tables · {{relationships}} relationships',
+            restore: 'Restore',
+            restoring: 'Restoring…',
+            close: 'Close',
         },
 
         import_diagram_dialog: {

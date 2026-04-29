@@ -49,6 +49,7 @@ export const hi: LanguageTranslation = {
                 backup: 'बैकअप',
                 export_diagram: 'आरेख निर्यात करें',
                 restore_diagram: 'आरेख पुनर्स्थापित करें',
+                versions: 'Versions',
             },
             help: {
                 help: 'मदद',
@@ -352,6 +353,8 @@ export const hi: LanguageTranslation = {
             back: 'वापस',
             // TODO: Translate
             import_from_file: 'Import from File',
+            sync_from_folder: 'Open from linked folder',
+            link_folder: 'Link repository folder…',
             empty_diagram: 'खाली डेटाबेस',
             continue: 'जारी रखें',
             import: 'आयात करें',
@@ -489,6 +492,34 @@ export const hi: LanguageTranslation = {
             },
         },
         // TODO: Translate
+
+        save_mode: {
+            save_now: 'Save',
+            saving: 'Saving…',
+            save_now_tooltip:
+                'Take a snapshot now (and write to folder if linked)',
+            auto: 'Auto-save',
+            manual: 'Manual save',
+            mode_label: 'Save mode',
+            folder_label: 'Repository folder',
+            link_folder: 'Link folder…',
+            change_folder: 'Change folder…',
+            unlink_folder: 'Unlink folder',
+            folder_unsupported:
+                'Requires a Chromium-based browser (Chrome / Edge / Brave)',
+        },
+
+        versions_dialog: {
+            title: 'Diagram Versions',
+            description:
+                'Automatic snapshots of your diagram. The last 3 edits are kept locally in your browser.',
+            empty: 'No versions saved yet. Start editing and a snapshot will appear shortly.',
+            meta: '{{tables}} tables · {{relationships}} relationships',
+            restore: 'Restore',
+            restoring: 'Restoring…',
+            close: 'Close',
+        },
+
         import_diagram_dialog: {
             title: 'Import Diagram',
             description: 'Paste the diagram JSON below:',

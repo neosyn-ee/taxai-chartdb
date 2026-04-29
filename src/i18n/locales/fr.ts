@@ -48,6 +48,7 @@ export const fr: LanguageTranslation = {
                 backup: 'Sauvegarde',
                 export_diagram: 'Exporter le diagramme',
                 restore_diagram: 'Restaurer le diagramme',
+                versions: 'Versions',
             },
             help: {
                 help: 'Aide',
@@ -346,6 +347,8 @@ export const fr: LanguageTranslation = {
             cancel: 'Annuler',
             back: 'Retour',
             import_from_file: "Importer à partir d'un fichier",
+            sync_from_folder: 'Open from linked folder',
+            link_folder: 'Link repository folder…',
             empty_diagram: 'Base de données vide',
             continue: 'Continuer',
             import: 'Importer',
@@ -482,6 +485,34 @@ export const fr: LanguageTranslation = {
                     "Une erreur s'est produite. Besoin d'aide ? support@chartdb.io",
             },
         },
+
+        save_mode: {
+            save_now: 'Save',
+            saving: 'Saving…',
+            save_now_tooltip:
+                'Take a snapshot now (and write to folder if linked)',
+            auto: 'Auto-save',
+            manual: 'Manual save',
+            mode_label: 'Save mode',
+            folder_label: 'Repository folder',
+            link_folder: 'Link folder…',
+            change_folder: 'Change folder…',
+            unlink_folder: 'Unlink folder',
+            folder_unsupported:
+                'Requires a Chromium-based browser (Chrome / Edge / Brave)',
+        },
+
+        versions_dialog: {
+            title: 'Diagram Versions',
+            description:
+                'Automatic snapshots of your diagram. The last 3 edits are kept locally in your browser.',
+            empty: 'No versions saved yet. Start editing and a snapshot will appear shortly.',
+            meta: '{{tables}} tables · {{relationships}} relationships',
+            restore: 'Restore',
+            restoring: 'Restoring…',
+            close: 'Close',
+        },
+
         import_diagram_dialog: {
             title: 'Importer un diagramme',
             description: 'Coller le diagramme au format JSON ci-dessous :',
