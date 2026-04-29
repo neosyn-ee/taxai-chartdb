@@ -347,6 +347,8 @@ export const fr: LanguageTranslation = {
             cancel: 'Annuler',
             back: 'Retour',
             import_from_file: "Importer à partir d'un fichier",
+            sync_from_folder: 'Open from linked folder',
+            link_folder: 'Link repository folder…',
             empty_diagram: 'Base de données vide',
             continue: 'Continuer',
             import: 'Importer',

@@ -62,3 +62,33 @@ export const writeDiagramFile = async ({
         await writable.close();
     }
 };
+
+export interface FolderDiagramEntry {
+    diagramId: string;
+    snapshot: string;
+}
+
+const extractDiagramIdFromFileName = (name: string): string | null => {
+    if (!name.endsWith(DIAGRAM_FILE_EXTENSION)) return null;
+    const id = name.slice(0, -DIAGRAM_FILE_EXTENSION.length);
+    return id.length > 0 ? id : null;
+};
+
+export const listDiagramFiles = async (
+    handle: FileSystemDirectoryHandle
+): Promise<FolderDiagramEntry[]> => {
+    const entries: FolderDiagramEntry[] = [];
+    for await (const child of handle.values()) {
+        if (child.kind !== 'file') continue;
+        const diagramId = extractDiagramIdFromFileName(child.name);
+        if (!diagramId) continue;
+        try {
+            const file = await child.getFile();
+            const snapshot = await file.text();
+            entries.push({ diagramId, snapshot });
+        } catch (error) {
+            console.error(`Failed to read ${child.name}`, error);
+        }
+    }
+    return entries;
+};

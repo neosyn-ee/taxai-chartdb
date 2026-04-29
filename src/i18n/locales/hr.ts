@@ -344,6 +344,8 @@ export const hr: LanguageTranslation = {
 
             cancel: 'Odustani',
             import_from_file: 'Uvezi iz datoteke',
+            sync_from_folder: 'Open from linked folder',
+            link_folder: 'Link repository folder…',
             back: 'Natrag',
             empty_diagram: 'Prazna baza podataka',
             continue: 'Nastavi',

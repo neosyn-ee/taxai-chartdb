@@ -352,6 +352,8 @@ export const pt_BR: LanguageTranslation = {
             back: 'Voltar',
             // TODO: Translate
             import_from_file: 'Import from File',
+            sync_from_folder: 'Open from linked folder',
+            link_folder: 'Link repository folder…',
             empty_diagram: 'Banco de dados vazio',
             continue: 'Continuar',
             import: 'Importar',

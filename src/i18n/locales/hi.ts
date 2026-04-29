@@ -353,6 +353,8 @@ export const hi: LanguageTranslation = {
             back: 'वापस',
             // TODO: Translate
             import_from_file: 'Import from File',
+            sync_from_folder: 'Open from linked folder',
+            link_folder: 'Link repository folder…',
             empty_diagram: 'खाली डेटाबेस',
             continue: 'जारी रखें',
             import: 'आयात करें',

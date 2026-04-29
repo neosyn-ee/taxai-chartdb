@@ -355,6 +355,8 @@ export const mr: LanguageTranslation = {
             cancel: 'रद्द करा',
             // TODO: Add translations
             import_from_file: 'Import from File',
+            sync_from_folder: 'Open from linked folder',
+            link_folder: 'Link repository folder…',
             back: 'मागे',
             empty_diagram: 'रिक्त डेटाबेस',
             continue: 'सुरू ठेवा',

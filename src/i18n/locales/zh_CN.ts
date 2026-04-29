@@ -342,6 +342,8 @@ export const zh_CN: LanguageTranslation = {
 
             cancel: '取消',
             import_from_file: '从文件导入',
+            sync_from_folder: 'Open from linked folder',
+            link_folder: 'Link repository folder…',
             back: '上一步',
             empty_diagram: '空数据库',
             continue: '下一步',

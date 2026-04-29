@@ -353,6 +353,8 @@ export const ja: LanguageTranslation = {
             back: '戻る',
             // TODO: Translate
             import_from_file: 'Import from File',
+            sync_from_folder: 'Open from linked folder',
+            link_folder: 'Link repository folder…',
             empty_diagram: '空のデータベース',
             continue: '続行',
             import: 'インポート',

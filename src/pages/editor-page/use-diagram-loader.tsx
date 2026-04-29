@@ -12,7 +12,7 @@ export const useDiagramLoader = () => {
     const [initialDiagram, setInitialDiagram] = useState<Diagram | undefined>();
     const { diagramId } = useParams<{ diagramId: string }>();
     const { config } = useConfig();
-    const { loadDiagram, currentDiagram } = useChartDB();
+    const { loadDiagram, currentDiagram, folderSyncStatus } = useChartDB();
     const { resetRedoStack, resetUndoStack } = useRedoUndoStack();
     const { showLoader, hideLoader } = useFullScreenLoader();
     const { openCreateDiagramDialog, openOpenDiagramDialog } = useDialog();
@@ -23,6 +23,10 @@ export const useDiagramLoader = () => {
 
     useEffect(() => {
         if (!config) {
+            return;
+        }
+
+        if (config.folderHandle && folderSyncStatus === 'pending') {
             return;
         }
 
@@ -86,6 +90,7 @@ export const useDiagramLoader = () => {
         showLoader,
         currentDiagram?.id,
         openOpenDiagramDialog,
+        folderSyncStatus,
     ]);
 
     return { initialDiagram };

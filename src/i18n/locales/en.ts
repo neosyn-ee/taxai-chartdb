@@ -340,6 +340,8 @@ export const en = {
 
             cancel: 'Cancel',
             import_from_file: 'Import from File',
+            sync_from_folder: 'Open from linked folder',
+            link_folder: 'Link repository folder…',
             back: 'Back',
             empty_diagram: 'Empty database',
             continue: 'Continue',

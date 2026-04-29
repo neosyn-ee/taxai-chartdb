@@ -348,6 +348,8 @@ export const id_ID: LanguageTranslation = {
 
             cancel: 'Batal',
             import_from_file: 'Impor dari file',
+            sync_from_folder: 'Open from linked folder',
+            link_folder: 'Link repository folder…',
             back: 'Kembali',
             empty_diagram: 'Database Kosong',
             continue: 'Lanjutkan',

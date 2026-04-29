@@ -343,6 +343,8 @@ export const ar: LanguageTranslation = {
 
             cancel: 'إلغاء',
             import_from_file: 'استيراد من ملف',
+            sync_from_folder: 'Open from linked folder',
+            link_folder: 'Link repository folder…',
             back: 'رجوع',
             empty_diagram: 'قاعدة بيانات فارغة',
             continue: 'متابعة',

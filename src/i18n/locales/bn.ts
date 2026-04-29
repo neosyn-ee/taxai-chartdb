@@ -352,6 +352,8 @@ export const bn: LanguageTranslation = {
             cancel: 'বাতিল করুন',
             back: 'ফিরে যান',
             import_from_file: 'ফাইল থেকে আমদানি করুন',
+            sync_from_folder: 'Open from linked folder',
+            link_folder: 'Link repository folder…',
             empty_diagram: 'খালি ডাটাবেস',
             continue: 'চালিয়ে যান',
             import: 'আমদানি করুন',

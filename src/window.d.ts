@@ -26,6 +26,7 @@ interface FileSystemFileHandle extends FileSystemHandle {
     createWritable: (options?: {
         keepExistingData?: boolean;
     }) => Promise<FileSystemWritableFileStream>;
+    getFile: () => Promise<File>;
 }
 
 interface FileSystemDirectoryHandle extends FileSystemHandle {
@@ -34,6 +35,12 @@ interface FileSystemDirectoryHandle extends FileSystemHandle {
         name: string,
         options?: { create?: boolean }
     ) => Promise<FileSystemFileHandle>;
+    values: () => AsyncIterableIterator<
+        FileSystemFileHandle | FileSystemDirectoryHandle
+    >;
+    entries: () => AsyncIterableIterator<
+        [string, FileSystemFileHandle | FileSystemDirectoryHandle]
+    >;
     queryPermission: (
         descriptor?: FileSystemHandlePermissionDescriptor
     ) => Promise<PermissionState>;

@@ -348,6 +348,8 @@ export const ru: LanguageTranslation = {
             cancel: 'Отменить',
             back: 'Назад',
             import_from_file: 'Импортировать из файла',
+            sync_from_folder: 'Open from linked folder',
+            link_folder: 'Link repository folder…',
             empty_diagram: 'Пустая база данных',
             continue: 'Продолжить',
             import: 'Импорт',

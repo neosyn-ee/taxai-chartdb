@@ -47,8 +47,13 @@ import { useDebounce } from '@/hooks/use-debounce-v2';
 import { useConfig } from '@/hooks/use-config';
 import {
     ensureFolderPermission,
+    listDiagramFiles,
+    queryFolderPermission,
     writeDiagramFile,
 } from '@/lib/file-system/file-system-folder';
+import { syncDiagramsFromFolder } from '@/lib/file-system/sync-from-folder';
+import { toast } from '@/components/toast/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 export interface ChartDBProviderProps {
     diagram?: Diagram;
@@ -1969,6 +1974,7 @@ export const ChartDBProvider: React.FC<
     const { config } = useConfig();
     const saveMode = config?.saveMode ?? 'auto';
     const folderHandle = config?.folderHandle;
+    const navigate = useNavigate();
 
     const lastSnapshotKeyRef = useRef<string>('');
 
@@ -2020,9 +2026,100 @@ export const ChartDBProvider: React.FC<
         persistSnapshot();
     }, [diagramId, diagramUpdatedAt, readonly, saveMode, persistSnapshot]);
 
+    const folderSyncDoneRef = useRef(false);
+    const [folderSyncStatus, setFolderSyncStatus] = useState<
+        'idle' | 'pending' | 'done'
+    >('idle');
+
+    const runFolderSync = useCallback(
+        async (handle: FileSystemDirectoryHandle) => {
+            if (folderSyncDoneRef.current) return;
+            try {
+                const entries = await listDiagramFiles(handle);
+                if (entries.length === 0) {
+                    folderSyncDoneRef.current = true;
+                    return;
+                }
+
+                const summary = await syncDiagramsFromFolder({
+                    storage: storageDB,
+                    entries,
+                });
+
+                folderSyncDoneRef.current = true;
+
+                const total = summary.imported + summary.updated;
+                if (total > 0) {
+                    toast({
+                        title: 'Repository folder synced',
+                        description: `${summary.imported} imported, ${summary.updated} updated, ${summary.skipped} skipped`,
+                    });
+                }
+
+                const touched = entries.some(
+                    (entry) => entry.diagramId === diagramId
+                );
+                if (touched && diagramId) {
+                    await loadDiagram(diagramId);
+                } else if (summary.imported > 0 && !diagramId && entries[0]) {
+                    navigate(`/diagrams/${entries[0].diagramId}`);
+                }
+            } catch (error) {
+                console.error('Folder sync failed', error);
+            }
+        },
+        [storageDB, diagramId, loadDiagram, navigate]
+    );
+
+    const syncFromFolder: ChartDBContext['syncFromFolder'] =
+        useCallback(async () => {
+            if (!folderHandle) return;
+            const allowed = await ensureFolderPermission(folderHandle);
+            if (!allowed) return;
+            folderSyncDoneRef.current = false;
+            await runFolderSync(folderHandle);
+        }, [folderHandle, runFolderSync]);
+
     const saveNow: ChartDBContext['saveNow'] = useCallback(async () => {
         await commitSnapshot();
-    }, [commitSnapshot]);
+        if (!folderHandle || folderSyncDoneRef.current) return;
+        const allowed = await ensureFolderPermission(folderHandle);
+        if (allowed) {
+            await runFolderSync(folderHandle);
+        }
+    }, [commitSnapshot, folderHandle, runFolderSync]);
+
+    useEffect(() => {
+        if (folderSyncDoneRef.current) return;
+        if (!folderHandle) {
+            setFolderSyncStatus('done');
+            return;
+        }
+
+        let cancelled = false;
+        setFolderSyncStatus('pending');
+
+        const run = async () => {
+            try {
+                const permission = await queryFolderPermission(folderHandle);
+                if (permission === 'denied') {
+                    folderSyncDoneRef.current = true;
+                    return;
+                }
+                if (permission !== 'granted') return;
+                if (cancelled) return;
+                await runFolderSync(folderHandle);
+            } finally {
+                if (!cancelled) setFolderSyncStatus('done');
+            }
+        };
+
+        run();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [folderHandle, runFolderSync]);
 
     const restoreDiagramVersion: ChartDBContext['restoreDiagramVersion'] =
         useCallback(
@@ -2251,6 +2348,8 @@ export const ChartDBProvider: React.FC<
                 loadDiagramFromData,
                 restoreDiagramVersion,
                 saveNow,
+                syncFromFolder,
+                folderSyncStatus,
                 updateDatabaseType,
                 updateDatabaseEdition,
                 clearDiagramData,

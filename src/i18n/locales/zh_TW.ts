@@ -341,6 +341,8 @@ export const zh_TW: LanguageTranslation = {
 
             cancel: '取消',
             import_from_file: '從檔案匯入',
+            sync_from_folder: 'Open from linked folder',
+            link_folder: 'Link repository folder…',
             back: '返回',
             empty_diagram: '空資料庫',
             continue: '繼續',

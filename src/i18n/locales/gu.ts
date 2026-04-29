@@ -349,6 +349,8 @@ export const gu: LanguageTranslation = {
             cancel: 'રદ કરો',
             back: 'પાછા',
             import_from_file: 'ફાઇલમાંથી આયાત કરો',
+            sync_from_folder: 'Open from linked folder',
+            link_folder: 'Link repository folder…',
             empty_diagram: 'ખાલી ડેટાબેસ',
             continue: 'ચાલુ રાખો',
             import: 'આયાત કરો',

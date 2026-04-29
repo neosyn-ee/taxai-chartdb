@@ -351,6 +351,8 @@ export const es: LanguageTranslation = {
             back: 'Atrás',
             // TODO: Translate
             import_from_file: 'Import from File',
+            sync_from_folder: 'Open from linked folder',
+            link_folder: 'Link repository folder…',
             empty_diagram: 'Base de datos vacía',
             continue: 'Continuar',
             import: 'Importar',

@@ -350,6 +350,8 @@ export const te: LanguageTranslation = {
             cancel: 'రద్దు',
             // TODO: Translate
             import_from_file: 'Import from File',
+            sync_from_folder: 'Open from linked folder',
+            link_folder: 'Link repository folder…',
             back: 'తిరుగు',
             empty_diagram: 'ఖాళీ డేటాబేస్',
             continue: 'కొనసాగించు',

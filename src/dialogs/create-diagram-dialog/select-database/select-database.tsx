@@ -12,6 +12,14 @@ import { DatabaseType } from '@/lib/domain/database-type';
 import { useTranslation } from 'react-i18next';
 import { SelectDatabaseContent } from './select-database-content';
 import { useDialog } from '@/hooks/use-dialog';
+import { useConfig } from '@/hooks/use-config';
+import { useChartDB } from '@/hooks/use-chartdb';
+import { FolderOpen } from 'lucide-react';
+import {
+    isFileSystemAccessSupported,
+    pickFolder,
+} from '@/lib/file-system/file-system-folder';
+import { useCallback } from 'react';
 
 export interface SelectDatabaseProps {
     onContinue: () => void;
@@ -29,7 +37,24 @@ export const SelectDatabase: React.FC<SelectDatabaseProps> = ({
     createNewDiagram,
 }) => {
     const { t } = useTranslation();
-    const { openImportDiagramDialog } = useDialog();
+    const { openImportDiagramDialog, closeCreateDiagramDialog } = useDialog();
+    const { config, updateConfig } = useConfig();
+    const { syncFromFolder } = useChartDB();
+    const folderLinked = !!config?.folderHandle;
+    const fsSupported = isFileSystemAccessSupported();
+
+    const handleLinkAndSync = useCallback(async () => {
+        const handle = await pickFolder();
+        if (!handle) return;
+        await updateConfig({ config: { folderHandle: handle } });
+        await syncFromFolder();
+        closeCreateDiagramDialog();
+    }, [updateConfig, syncFromFolder, closeCreateDiagramDialog]);
+
+    const handleSyncFromFolder = useCallback(async () => {
+        await syncFromFolder();
+        closeCreateDiagramDialog();
+    }, [syncFromFolder, closeCreateDiagramDialog]);
 
     return (
         <>
@@ -49,21 +74,42 @@ export const SelectDatabase: React.FC<SelectDatabaseProps> = ({
                 />
             </DialogInternalContent>
             <DialogFooter className="mt-4 flex !justify-between gap-2">
-                {hasExistingDiagram ? (
-                    <DialogClose asChild>
-                        <Button type="button" variant="secondary">
-                            {t('new_diagram_dialog.cancel')}
+                <div className="flex gap-2">
+                    {hasExistingDiagram ? (
+                        <DialogClose asChild>
+                            <Button type="button" variant="secondary">
+                                {t('new_diagram_dialog.cancel')}
+                            </Button>
+                        </DialogClose>
+                    ) : (
+                        <Button
+                            type="button"
+                            variant="ghost"
+                            onClick={openImportDiagramDialog}
+                        >
+                            {t('new_diagram_dialog.import_from_file')}
                         </Button>
-                    </DialogClose>
-                ) : (
-                    <Button
-                        type="button"
-                        variant="ghost"
-                        onClick={openImportDiagramDialog}
-                    >
-                        {t('new_diagram_dialog.import_from_file')}
-                    </Button>
-                )}
+                    )}
+                    {folderLinked ? (
+                        <Button
+                            type="button"
+                            variant="ghost"
+                            onClick={handleSyncFromFolder}
+                        >
+                            <FolderOpen className="mr-1 size-4" />
+                            {t('new_diagram_dialog.sync_from_folder')}
+                        </Button>
+                    ) : fsSupported ? (
+                        <Button
+                            type="button"
+                            variant="ghost"
+                            onClick={handleLinkAndSync}
+                        >
+                            <FolderOpen className="mr-1 size-4" />
+                            {t('new_diagram_dialog.link_folder')}
+                        </Button>
+                    ) : null}
+                </div>
                 <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end sm:space-x-2">
                     <Button
                         type="button"

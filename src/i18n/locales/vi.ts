@@ -348,6 +348,8 @@ export const vi: LanguageTranslation = {
 
             cancel: 'Hủy',
             import_from_file: 'Nhập từ tệp',
+            sync_from_folder: 'Open from linked folder',
+            link_folder: 'Link repository folder…',
             back: 'Trở lại',
             empty_diagram: 'Cơ sở dữ liệu trống',
             continue: 'Tiếp tục',

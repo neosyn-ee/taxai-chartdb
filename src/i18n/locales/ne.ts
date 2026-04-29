@@ -350,6 +350,8 @@ export const ne: LanguageTranslation = {
 
             cancel: 'रद्द गर्नुहोस्',
             import_from_file: 'फाइलबाट आयात गर्नुहोस्',
+            sync_from_folder: 'Open from linked folder',
+            link_folder: 'Link repository folder…',
             back: 'फर्क',
             empty_diagram: 'खाली डाटाबेस',
             continue: 'जारी राख्नुहोस्',

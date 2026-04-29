@@ -101,6 +101,8 @@ export interface ChartDBContext {
     ) => Promise<void>;
     restoreDiagramVersion: (versionId: string) => Promise<void>;
     saveNow: () => Promise<void>;
+    syncFromFolder: () => Promise<void>;
+    folderSyncStatus: 'idle' | 'pending' | 'done';
 
     // Database type operations
     updateDatabaseType: (databaseType: DatabaseType) => Promise<void>;
@@ -361,6 +363,8 @@ export const chartDBContext = createContext<ChartDBContext>({
     loadDiagramFromData: emptyFn,
     restoreDiagramVersion: emptyFn,
     saveNow: emptyFn,
+    syncFromFolder: emptyFn,
+    folderSyncStatus: 'idle',
     clearDiagramData: emptyFn,
     deleteDiagram: emptyFn,
     updateDiagramData: emptyFn,

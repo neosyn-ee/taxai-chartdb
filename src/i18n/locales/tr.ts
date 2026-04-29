@@ -344,6 +344,8 @@ export const tr: LanguageTranslation = {
             },
             // TODO: Translate
             import_from_file: 'Import from File',
+            sync_from_folder: 'Open from linked folder',
+            link_folder: 'Link repository folder…',
             cancel: 'İptal',
             back: 'Geri',
             empty_diagram: 'Boş veritabanı',
