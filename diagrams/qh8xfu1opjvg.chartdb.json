@@ -2,7 +2,7 @@
   "id": "0",
   "name": "TAXAI",
   "createdAt": "2026-04-29T10:44:12.867Z",
-  "updatedAt": "2026-05-05T15:15:19.183Z",
+  "updatedAt": "2026-05-06T09:28:43.574Z",
   "databaseType": "postgresql",
   "tables": [
     {
@@ -527,8 +527,8 @@
       "id": "42",
       "name": "tenant_case_counter",
       "schema": "public",
-      "x": -481.2377039284944,
-      "y": -197.97300248537422,
+      "x": -461.40911007960335,
+      "y": 39.9701237013181,
       "fields": [
         {
           "id": "43",
@@ -1142,8 +1142,8 @@
       "id": "91",
       "name": "case",
       "schema": "public",
-      "x": 809.2506125925859,
-      "y": -1161.9220032959165,
+      "x": 829.0792064414769,
+      "y": -923.9788771092242,
       "fields": [
         {
           "id": "92",
@@ -1390,8 +1390,8 @@
       "id": "112",
       "name": "tenant",
       "schema": "public",
-      "x": -518.2516736563799,
-      "y": -1109.028359139102,
+      "x": -498.4230798074889,
+      "y": -871.0852329524096,
       "fields": [
         {
           "id": "113",
@@ -2608,8 +2608,8 @@
       "id": "213",
       "name": "legal_entity",
       "schema": "public",
-      "x": 311.52835783916856,
-      "y": -1081.2458480811003,
+      "x": 331.3569516880596,
+      "y": -843.302721894408,
       "fields": [
         {
           "id": "214",
@@ -2901,8 +2901,8 @@
       "id": "237",
       "name": "user_session",
       "schema": "public",
-      "x": 765.9517066077278,
-      "y": -314.61675338440034,
+      "x": 785.7803004566189,
+      "y": -76.67362719770802,
       "fields": [
         {
           "id": "238",
@@ -3429,8 +3429,8 @@
       "id": "281",
       "name": "user",
       "schema": "public",
-      "x": -141.1693689979196,
-      "y": -830.0736912268821,
+      "x": -121.34077514902856,
+      "y": -592.1305650401898,
       "fields": [
         {
           "id": "282",
@@ -4520,6 +4520,34 @@
     },
     {
       "id": "366",
+      "name": "user_session_user_id_fk",
+      "sourceSchema": "public",
+      "sourceTableId": "237",
+      "targetSchema": "public",
+      "targetTableId": "281",
+      "sourceFieldId": "239",
+      "targetFieldId": "282",
+      "sourceCardinality": "one",
+      "targetCardinality": "one",
+      "createdAt": 1777994061272,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "367",
+      "name": "user_session_user_id_fk",
+      "sourceSchema": "public",
+      "sourceTableId": "237",
+      "targetSchema": "public",
+      "targetTableId": "281",
+      "sourceFieldId": "239",
+      "targetFieldId": "282",
+      "sourceCardinality": "one",
+      "targetCardinality": "one",
+      "createdAt": 1777993998044,
+      "diagramId": "qh8xfu1opjvg"
+    },
+    {
+      "id": "368",
       "name": "user_session_user_id_user_id",
       "sourceSchema": "public",
       "sourceTableId": "237",
@@ -4533,7 +4561,7 @@
       "diagramId": "qh8xfu1opjvg"
     },
     {
-      "id": "367",
+      "id": "369",
       "name": "user_tenant_id_tenant_id",
       "sourceSchema": "public",
       "sourceTableId": "281",
@@ -4545,32 +4573,6 @@
       "targetCardinality": "one",
       "createdAt": 1777459109434,
       "diagramId": "qh8xfu1opjvg"
-    },
-    {
-      "id": "368",
-      "name": "user_session_user_id_fk",
-      "sourceSchema": "public",
-      "sourceTableId": "237",
-      "targetSchema": "public",
-      "targetTableId": "281",
-      "sourceFieldId": "239",
-      "targetFieldId": "282",
-      "sourceCardinality": "one",
-      "targetCardinality": "one",
-      "createdAt": 1777993998044
-    },
-    {
-      "id": "369",
-      "name": "user_session_user_id_fk",
-      "sourceSchema": "public",
-      "sourceTableId": "237",
-      "targetSchema": "public",
-      "targetTableId": "281",
-      "sourceFieldId": "239",
-      "targetFieldId": "282",
-      "sourceCardinality": "one",
-      "targetCardinality": "one",
-      "createdAt": 1777994061272
     }
   ],
   "dependencies": [],
@@ -4608,8 +4610,8 @@
     {
       "id": "373",
       "name": "Master data",
-      "x": -614.520596672227,
-      "y": -1276.8542417609744,
+      "x": -594.692002823336,
+      "y": -1038.9111155742821,
       "width": 2028,
       "height": 1406,
       "color": "#7175fa",
