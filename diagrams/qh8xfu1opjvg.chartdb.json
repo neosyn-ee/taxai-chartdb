@@ -2,7 +2,7 @@
   "id": "0",
   "name": "TAXAI",
   "createdAt": "2026-04-29T10:44:12.867Z",
-  "updatedAt": "2026-05-06T09:28:43.574Z",
+  "updatedAt": "2026-05-18T11:27:13.000Z",
   "databaseType": "postgresql",
   "tables": [
     {
@@ -2011,6 +2011,19 @@
           "nullable": true,
           "createdAt": 1777459109433,
           "comments": "Soft delete"
+        },
+        {
+          "id": "394",
+          "name": "thread_id",
+          "type": {
+            "id": "text",
+            "name": "text"
+          },
+          "primaryKey": false,
+          "unique": false,
+          "nullable": true,
+          "createdAt": 1779200000000,
+          "comments": "RAG service thread identifier. NULL until first message is processed."
         }
       ],
       "indexes": [
